@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POD Network — Office Readiness Assessment</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #F5F0EB;
+    --card:        #EDE8E1;
+    --input:       #FAF7F4;
+    --border:      #D6CFC4;
+    --border-act:  #8B7355;
+    --txt:         #2C2416;
+    --txt-mid:     #6B5B45;
+    --txt-lt:      #9C8B75;
+    --gold:        #8B7355;
+    --gold-lt:     #C4A882;
+    --gold-pale:   #EDE0CC;
+    --green:       #4A6741;
+    --green-bg:    #E8EFE7;
+    --blue:        #3D5A6B;
+    --blue-bg:     #E4EDF2;
+    --orange:      #7A4F2E;
+    --orange-bg:   #F5EAE0;
+    --red:         #6B3328;
+    --red-bg:      #F5E8E6;
+    --white:       #FDFAF7;
+    --sand-mid:    #EDE8E1;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--txt);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 28px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner { max-width: 720px; margin: 0 auto; }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .eyebrow {
+    font-family: sans-serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-lt);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 21px;
+    font-weight: bold;
+    color: var(--txt);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .header-sub {
+    font-family: sans-serif;
+    font-size: 12px;
+    color: var(--txt-lt);
+    margin-top: 3px;
+  }
+  .progress-dots { display: flex; align-items: center; gap: 6px; padding-top: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+  .dot.filled { background: var(--gold); }
+  .progress-label { font-family: sans-serif; font-size: 11px; color: var(--txt-lt); margin-left: 4px; }
+  .office-input {
+    margin-top: 14px;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--txt);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: sans-serif;
+    outline: none;
+  }
+  .office-input::placeholder { color: #B8A898; }
+
+  .cards { max-width: 720px; margin: 24px auto 0; padding: 0 18px; }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .card.answered { border-color: var(--border-act); }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-meta { flex: 1; }
+  .card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .weight-badge {
+    font-family: sans-serif;
+    font-size: 10px;
+    color: var(--txt-lt);
+    background: var(--card);
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .card-title { font-size: 14px; font-weight: bold; color: var(--txt); }
+  .card-desc { font-family: sans-serif; font-size: 12px; color: var(--txt-lt); }
+  .card-score-display { font-family: sans-serif; font-size: 28px; font-weight: bold; color: var(--gold); margin-left: 14px; line-height: 1; }
+
+  .options { display: flex; flex-direction: column; gap: 5px; }
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 13px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--input);
+    color: var(--txt-mid);
+    font-family: sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .option-btn.selected { border-color: var(--gold); background: var(--gold-pale); color: var(--txt); }
+  .option-btn:hover:not(.​​​​​​​​​​​​​​​​
