@@ -94,10 +94,32 @@
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
     th { background: #eff5f4; text-align: left; padding: 15px; font-size: 11px; text-transform: uppercase; color: var(--teal); }
     td { padding: 15px; border-bottom: 1px solid var(--line); font-size: 14px; }
-    .grade-pill { padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; }
-    .A-plus { background: #d4edda; color: #155724; }
-    .A { background: #d1ecf1; color: #0c5460; }
-    .B-plus { background: #fff3cd; color: #856404; }
+    
+    /* Standout Highlight Row Clickable */
+    tr.clickable-row { cursor: pointer; transition: background-color 0.2s; }
+    tr.clickable-row:hover td { background-color: #f3f7f6; }
+    
+    tr.standout-row td {
+      background-color: #fffde6 !important;
+      border-top: 2px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+    }
+    
+    /* Notes Accordion */
+    .notes-drawer td { padding: 0; background: #fafafa; border-bottom: 1px solid var(--line); }
+    .drawer-content { display: none; padding: 20px; font-size: 13px; line-height: 1.6; color: #444; border-left: 4px solid var(--gold); }
+    .drawer-content.open { display: block; }
+    .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .note-block { background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--line); }
+    .note-block h4 { font-size: 11px; text-transform: uppercase; color: var(--teal); letter-spacing: 0.5px; margin-bottom: 6px; }
+
+    /* Grade Pills */
+    .grade-pill { padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 12px; display: inline-block; }
+    .A-plus { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .A { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    .B-plus { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .B { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .C { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
     .admin-footer { margin-top: 100px; text-align: center; opacity: 0.3; font-size: 10px; cursor: pointer; }
   </style>
@@ -136,7 +158,7 @@
       <thead>
         <tr>
           <th>Date</th>
-          <th>Name</th>
+          <th>Name / Team (Tap to expand)</th>
           <th>Role</th>
           <th>Grade</th>
           <th>Score</th>
@@ -273,17 +295,86 @@
       const body = document.getElementById("adminBody");
       body.innerHTML = "";
       document.getElementById("adminStatus").innerText = `${data.length} Submissions Found`;
-      data.forEach(row => {
-        const tr = document.createElement("tr");
+      
+      data.forEach((row, index) => {
         const gradeClass = row.finalgrade ? row.finalgrade.replace('+', '-plus') : 'C';
-        tr.innerHTML = `<td>${new Date(row.timestamp).toLocaleDateString()}</td><td style="font-weight:700">${row.officename}</td><td>${row.role}</td><td><span class="grade-pill ${gradeClass}">${row.finalgrade}</span></td><td>${row.rawscore}%</td>`;
+        const isElite = (row.finalgrade === "A+" || row.finalgrade === "A");
+        
+        const displayName = row.officename || row["officename"] || row["Office Name"] || row["officeName"] || "Anonymous Agent";
+        const displayRole = row.role || row["Role"] || row["role"] || "N/A";
+        
+        // Parse the notes if they are stringified JSON
+        let parsedNotes = {};
+        try {
+          parsedNotes = typeof row.notes === "string" ? JSON.parse(row.notes) : row.notes || {};
+        } catch (e) {
+          parsedNotes = { manual: row.notes };
+        }
+
+        // Main Profile Row
+        const tr = document.createElement("tr");
+        tr.classList.add('clickable-row');
+        if (isElite) tr.classList.add('standout-row');
+        tr.setAttribute('onclick', `toggleDrawer('drawer-${index}')`);
+
+        tr.innerHTML = `
+          <td>${new Date(row.timestamp).toLocaleDateString()}</td>
+          <td style="font-weight:700">${displayName}</td>
+          <td>${displayRole}</td>
+          <td><span class="grade-pill ${gradeClass}">${row.finalgrade}</span></td>
+          <td>${row.rawscore}%</td>
+        `;
         body.appendChild(tr);
+
+        // Sub-Drawer Hidden Row
+        const drawerTr = document.createElement("tr");
+        drawerTr.classList.add('notes-drawer');
+        
+        // Build Note Fields
+        let notesHtml = '';
+        if (parsedNotes.manual) {
+          notesHtml = `<div class="note-block"><h4>General Notes</h4><p>${parsedNotes.manual}</p></div>`;
+        } else {
+          for (const [key, value] of Object.entries(parsedNotes)) {
+            if (value && value.trim() !== '') {
+              const variable = VARIABLES.find(v => v.id === key);
+              const label = variable ? variable.label : key;
+              notesHtml += `<div class="note-block"><h4>${label}</h4><p>${value}</p></div>`;
+            }
+          }
+        }
+        
+        if (!notesHtml) notesHtml = '<p style="color:#aaa; font-style:italic;">No field notes recorded for this assessment.</p>';
+
+        drawerTr.innerHTML = `
+          <td colspan="5">
+            <div id="drawer-${index}" class="drawer-content">
+              <h3 style="margin-bottom:15px; font-size:14px; font-weight:800; color:var(--teal)">Detailed Field Notes & Diagnostics</h3>
+              <div class="notes-grid">
+                ${notesHtml}
+              </div>
+            </div>
+          </td>
+        `;
+        body.appendChild(drawerTr);
       });
     }
 
+    window.toggleDrawer = function(id) {
+      const drawer = document.getElementById(id);
+      if (drawer) {
+        drawer.classList.toggle('open');
+      }
+    };
+
     function filterAdmin() {
       const query = document.getElementById("adminSearch").value.toLowerCase();
-      const filtered = allLogs.filter(r => r.officename.toLowerCase().includes(query) || r.role.toLowerCase().includes(query) || r.finalgrade.toLowerCase().includes(query));
+      const filtered = allLogs.filter(r => {
+        const name = (r.officename || r["officename"] || r["Office Name"] || "").toLowerCase();
+        const role = (r.role || r["Role"] || "").toLowerCase();
+        const grade = (r.finalgrade || "").toLowerCase();
+        return name.includes(query) || role.includes(query) || grade.includes(query);
+      });
       renderAdminTable(filtered);
     }
 
