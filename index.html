@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>POD Network — Office Readiness Assessment</title>
+  <title>POD Network — Office Readiness</title>
   <style>
     :root {
       --bg: #faf8f5;
@@ -27,11 +27,12 @@
     }
 
     .shell { max-width: 600px; margin: 0 auto; }
+    .admin-shell { max-width: 1000px; margin: 0 auto; display: none; }
+
     .eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
     h1 { font-family: Georgia, serif; font-size: 32px; font-weight: 700; margin-bottom: 12px; color: #111; }
     .sub { font-size: 15px; color: var(--text-soft); margin-bottom: 24px; }
 
-    /* Progress Dots */
     .progress-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .dots { display: flex; gap: 6px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background-color: #d8cec1; }
@@ -39,76 +40,47 @@
     .dot-count { font-size: 14px; font-weight: 600; color: var(--text-soft); }
 
     .office-input {
-      width: 100%;
-      background-color: #f7f3ed;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 15px;
-      margin-bottom: 30px;
-      outline: none;
+      width: 100%; background-color: #f7f3ed; border: 1px solid var(--line);
+      border-radius: 12px; padding: 14px 16px; font-size: 15px; margin-bottom: 30px; outline: none;
     }
 
-    /* Card Styling */
     .card {
-      background-color: var(--card-bg);
-      border: 1px solid #dbe6e4;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 24px;
+      background-color: var(--card-bg); border: 1px solid #dbe6e4;
+      border-radius: 20px; padding: 24px; margin-bottom: 24px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
 
     .q-badge {
-      background-color: var(--teal);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-block;
-      margin-bottom: 12px;
-      text-transform: uppercase;
+      background-color: var(--teal); color: white; padding: 4px 12px;
+      border-radius: 12px; font-size: 11px; font-weight: 700;
+      display: inline-block; margin-bottom: 12px; text-transform: uppercase;
     }
 
     .q-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; display: block; }
     .q-desc { font-size: 14px; color: var(--text-soft); margin-bottom: 16px; display: block; }
     .guide { border-left: 3px solid var(--teal); padding-left: 14px; font-size: 14px; color: #4a4a4a; margin-bottom: 24px; }
 
-    /* Custom Radio Options */
     .options { display: flex; flex-direction: column; gap: 10px; }
     .option {
-      background-color: var(--option-bg);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-      transition: 0.2s;
+      background-color: var(--option-bg); border: 1px solid var(--line);
+      border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: 0.2s;
     }
     .option input { display: none; }
-    
     .option-num {
       min-width: 26px; height: 26px; border-radius: 50%;
       background-color: #efede8; color: var(--text-soft);
       display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 700; flex-shrink: 0;
     }
-
     .option.selected { border-color: var(--gold); background-color: #fdfaf5; }
     .option.selected .option-num { background-color: var(--gold); color: white; }
 
-    /* Meter & Notes */
     .meter { height: 6px; background-color: #e2d9cf; border-radius: 10px; margin-top: 20px; overflow: hidden; }
     .meter-fill { height: 100%; background-color: var(--gold); width: 0%; transition: width 0.3s ease; }
-    .notes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a19586; margin-top: 18px; margin-bottom: 6px; display: block; }
-    textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; font-family: inherit; resize: vertical; outline: none; background: white; }
+    .notes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 18px; margin-bottom: 6px; display: block; color: #a19586; }
+    textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; background: white; outline: none; }
 
-    /* Results */
-    .reveal-box { margin-top: 30px; display: none; text-align: center; }
-    .reveal-box.show { display: block; }
     .reveal-btn { width: 100%; padding: 18px; background-color: var(--teal); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
     
     .results-area { display: none; margin-top: 30px; background: white; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
@@ -116,13 +88,23 @@
     .results-top { padding: 40px 30px; text-align: center; background-color: #eff5f4; }
     .res-grade { font-family: Georgia, serif; font-size: 72px; font-weight: 700; margin-bottom: 12px; }
     .res-tier { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
-    .res-body { padding: 24px; text-align: center; }
-    .reset-btn { margin-top: 20px; padding: 12px 24px; border-radius: 10px; border: 1px solid var(--gold); background: transparent; color: var(--gold); font-weight: 700; text-transform: uppercase; font-size: 13px; cursor: pointer; }
+
+    /* Admin Specific Styling */
+    .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 20px; font-size: 15px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+    th { background: #eff5f4; text-align: left; padding: 15px; font-size: 11px; text-transform: uppercase; color: var(--teal); }
+    td { padding: 15px; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .grade-pill { padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 11px; }
+    .A-plus { background: #d4edda; color: #155724; }
+    .A { background: #d1ecf1; color: #0c5460; }
+    .B-plus { background: #fff3cd; color: #856404; }
+
+    .admin-footer { margin-top: 100px; text-align: center; opacity: 0.3; font-size: 10px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <div class="shell">
+  <div id="assessmentView" class="shell">
     <div class="eyebrow">POD Network</div>
     <h1>Office Readiness Assessment</h1>
     <p class="sub">Answer based on what exists right now — not projections.</p>
@@ -136,126 +118,174 @@
 
     <div id="surveyContainer"></div>
 
-    <div id="revealBox" class="reveal-box">
+    <div id="revealBox" style="display:none; margin-top: 30px;">
       <button class="reveal-btn" id="revealBtn">Reveal Assessment Result</button>
     </div>
 
     <div id="resultsArea" class="results-area"></div>
+
+    <div class="admin-footer" onclick="accessAdmin()">Admin Portal Access</div>
+  </div>
+
+  <div id="adminView" class="admin-shell">
+    <div class="eyebrow">Secure Dashboard</div>
+    <h1>Assessment Logs</h1>
+    <input type="text" id="adminSearch" class="search-bar" placeholder="Search by name, role, or grade..." onkeyup="filterAdmin()">
+    <div id="adminStatus" style="margin-bottom: 10px; font-size: 12px; font-weight: 700; color: var(--gold);">Syncing data...</div>
+    <table id="adminTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Grade</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="adminBody"></tbody>
+    </table>
+    <button class="reveal-btn" style="margin-top: 20px; background: #666;" onclick="window.location.reload()">Exit Admin Mode</button>
   </div>
 
   <script>
+    // --- 🔑 PLUG IN YOUR URL AND YOUR KEY HERE ---
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzA9FEcLJPybwy_Be28YSXTCAAWOJOEys7ZaZwIeScQrUpHBWrNKGo_ur1MxdHfAHl4/exec"; 
+    const SECRET_KEY = "POD2026"; 
+
+    // --- LOGIC ---
+    const state = { classifierAnswers: {}, scores: {}, notes: {} };
+    let allLogs = [];
+
     const CLASSIFIERS = [
-      { id: "role", label: "What best describes your role?", desc: "Determines how your results are interpreted.", guidance: "Select the option that describes you today.", options: [
+      { id: "role", label: "What best describes your role?", desc: "Determines program tiering.", guidance: "Select your current status.", options: [
         { value: "referral", label: "EXP Commercial referral agent" },
-        { value: "solo", label: "Solo agent — independent, no team" },
+        { value: "solo", label: "Solo agent — independent" },
         { value: "team", label: "Agent on a team" },
-        { value: "leader", label: "Team leader or mega team operator" }
+        { value: "leader", label: "Team leader / Mega team" }
       ]},
-      { id: "txcount", label: "Last 12 Month Transactions", desc: "Individual or team total.", guidance: "Real numbers only.", options: [
-        { value: "tx1", label: "10–20 transactions" }, { value: "tx2", label: "20–30 transactions" }, { value: "tx3", label: "30–50 transactions" }, { value: "tx4", label: "50–100 transactions" }, { value: "tx5", label: "100+ transactions" }
+      { id: "txcount", label: "Transaction Count", desc: "Total last 12 months.", guidance: "Actual closed production.", options: [
+        { value: "tx1", label: "10–20" }, { value: "tx2", label: "20–30" }, { value: "tx3", label: "30–50" }, { value: "tx4", label: "50–100" }, { value: "tx5", label: "100+" }
       ]}
     ];
 
     const VARIABLES = [
-      { id: "volume", label: "Team Production Volume", weight: 20, maxScore: 6, desc: "Total volume closed in the last 12 months.", guidance: "What did you actually close?", notesPrompt: "Exact volume details...", options: ["$5M – $25M", "$25M – $50M", "$50M – $100M", "$100M – $150M", "$150M – $200M", "$200M+"] },
-      { id: "capicon", label: "Agent Cap & Icon Rate", weight: 15, maxScore: 5, desc: "Ratio of agents capping/iconing.", guidance: "Think ratio, not total.", notesPrompt: "Total agents / caps / icons...", options: ["< 20% capped", "20–40% capped", "40–70% capped", "70–90% capped", "90%+ capped"] },
-      { id: "wealth", label: "Geographic Proximity to Wealth", weight: 15, maxScore: 5, desc: "Proximity to high-net-worth corridors.", guidance: "How far from where wealth transacts?", notesPrompt: "Key zip codes...", options: ["Remote", "Adjacent (20+ min)", "Near commercial zones", "Within wealth corridor", "Embedded in luxury hub"] },
-      { id: "engagement", label: "Leader Engagement", weight: 20, maxScore: 5, desc: "Willingness to champion the program.", guidance: "Score behavior, not just talk.", notesPrompt: "Engagement history...", options: ["Passive", "Curious", "Supportive", "Committed", "Champion"] },
-      { id: "crm", label: "Business Owner Relationships", weight: 15, maxScore: 5, desc: "Decision-makers in your CRM.", guidance: "Who owns or operates a business?", notesPrompt: "Key business contacts...", options: ["1 small business", "Multiple small businesses", "C-suite/Founder", "Multi-location operator", "Enterprise decision-maker"] },
-      { id: "investor", label: "Portfolio Relationships", weight: 10, maxScore: 5, desc: "Relationships with portfolio owners.", guidance: "People who own multiple properties.", notesPrompt: "Top landlords...", options: ["None", "Casual (1-2 properties)", "Moderate base", "Active landlords", "Deep portfolio network"] },
-      { id: "velocity", label: "Commercial Velocity", weight: 3, maxScore: 5, desc: "Market activity in your territory.", guidance: "Are commercial deals happening?", notesPrompt: "Market observations...", options: ["Very low", "Low", "Moderate", "Active", "High"] },
-      { id: "access", label: "Market Accessibility", weight: 2, maxScore: 5, desc: "Physical accessibility to clients.", guidance: "Easy to meet here?", notesPrompt: "Location notes...", options: ["Difficult", "Somewhat accessible", "Reasonably accessible", "Well-positioned", "Prime location"] }
+      { id: "volume", label: "Team Production Volume", weight: 20, maxScore: 6, desc: "Volume closed in last 12 months.", guidance: "Real numbers only.", notesPrompt: "Volume details...", options: ["$5M – $25M", "$25M – $50M", "$50M – $100M", "$100M – $150M", "$150M – $200M", "$200M+"] },
+      { id: "capicon", label: "Agent Cap & Icon Rate", weight: 15, maxScore: 5, desc: "Ratio of agents capping.", guidance: "Efficiency metric.", notesPrompt: "Ratio details...", options: ["< 20%", "20–40%", "40–70%", "70–90%", "90%+"] },
+      { id: "wealth", label: "Geographic Proximity", weight: 15, maxScore: 5, desc: "Distance to wealth corridors.", guidance: "Market positioning.", notesPrompt: "Zip codes...", options: ["Remote", "Adjacent", "Near Zones", "Within Corridor", "Primary Hub"] },
+      { id: "engagement", label: "Leader Engagement", weight: 20, maxScore: 5, desc: "Commitment to the program.", guidance: "Score observed behavior.", notesPrompt: "Engagement notes...", options: ["Passive", "Curious", "Supportive", "Committed", "Champion"] },
+      { id: "crm", label: "Business Owner CRM", weight: 15, maxScore: 5, desc: "Contacts who are business owners.", guidance: "Decision maker count.", notesPrompt: "Key owners...", options: ["One", "Multiple", "C-Suite", "Multi-Location", "Enterprise"] },
+      { id: "investor", label: "Portfolio Relationships", weight: 10, maxScore: 5, desc: "Scale of investor contacts.", guidance: "Portfolio scale.", notesPrompt: "Landlord names...", options: ["None", "Casual", "Moderate", "Active", "Deep Network"] },
+      { id: "velocity", label: "Market Velocity", weight: 3, maxScore: 5, desc: "Local commercial activity level.", guidance: "Transaction frequency.", notesPrompt: "Market status...", options: ["Very Low", "Low", "Moderate", "Active", "High"] },
+      { id: "access", label: "Physical Accessibility", weight: 2, maxScore: 5, desc: "Office/Territory access.", guidance: "Client ease of meeting.", notesPrompt: "Location notes...", options: ["Difficult", "Fair", "Reasonable", "Good", "Prime"] }
     ];
-
-    const state = { classifierAnswers: {}, scores: {}, notes: {} };
 
     function initApp() {
       const container = document.getElementById("surveyContainer");
       let html = "";
 
-      CLASSIFIERS.forEach((c, i) => {
+      [...CLASSIFIERS, ...VARIABLES].forEach((q, i) => {
+        const isVar = !!q.weight;
         html += `
-          <div class="card" data-qid="${c.id}" data-type="classifier">
+          <div class="card" data-qid="${q.id}">
             <span class="q-badge">Question ${i + 1}</span>
-            <span class="q-title">${c.label}</span>
-            <span class="q-desc">${c.desc}</span>
-            <div class="guide">${c.guidance}</div>
+            <span class="q-title">${q.label}</span>
+            <span class="q-desc">${q.desc}</span>
+            <div class="guide">${q.guidance}</div>
             <div class="options">
-              ${c.options.map((opt, idx) => `
+              ${(isVar ? q.options : q.options.map(o => o.label)).map((opt, idx) => `
                 <label class="option">
-                  <input type="radio" name="${c.id}" value="${opt.value}" onclick="handleSelect(this, '${c.id}', 'classifier')">
+                  <input type="radio" name="${q.id}" value="${isVar ? idx + 1 : q.options[idx].value}" onclick="handleSelect(this, '${q.id}', '${isVar ? 'score' : 'classifier'}')">
                   <span class="option-num">${idx + 1}</span>
-                  <span>${opt.label}</span>
+                  <span>${isVar ? opt : q.options[idx].label}</span>
                 </label>
               `).join('')}
             </div>
-          </div>`;
-      });
-
-      VARIABLES.forEach((v, i) => {
-        html += `
-          <div class="card" data-qid="${v.id}" data-type="variable">
-            <span class="q-badge">Question ${CLASSIFIERS.length + i + 1}</span>
-            <span class="q-title">${v.label}</span>
-            <span class="q-desc">${v.desc}</span>
-            <div class="guide">${v.guidance}</div>
-            <div class="options">
-              ${v.options.map((opt, idx) => `
-                <label class="option">
-                  <input type="radio" name="${v.id}" value="${idx + 1}" onclick="handleSelect(this, '${v.id}', 'score')">
-                  <span class="option-num">${idx + 1}</span>
-                  <span>${opt}</span>
-                </label>
-              `).join('')}
-            </div>
-            <div class="meter"><div class="meter-fill" id="fill-${v.id}"></div></div>
+            ${isVar ? `<div class="meter"><div class="meter-fill" id="fill-${q.id}"></div></div>
             <span class="notes-label">Field Notes</span>
-            <textarea class="notes" onblur="state.notes['${v.id}'] = this.value" placeholder="${v.notesPrompt}"></textarea>
+            <textarea class="notes" onblur="state.notes['${q.id}'] = this.value" placeholder="${q.notesPrompt}"></textarea>` : ''}
           </div>`;
       });
-
       container.innerHTML = html;
       updateUI();
     }
 
-    window.handleSelect = function(input, qid, type) {
-      const card = input.closest('.card');
-      card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    function handleSelect(input, qid, type) {
+      input.closest('.card').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
       input.closest('.option').classList.add('selected');
-
       if (type === 'classifier') state.classifierAnswers[qid] = input.value;
       else {
         state.scores[qid] = Number(input.value);
-        const v = VARIABLES.find(varObj => varObj.id === qid);
+        const v = VARIABLES.find(obj => obj.id === qid);
         document.getElementById(`fill-${qid}`).style.width = `${(Number(input.value) / v.maxScore) * 100}%`;
       }
       updateUI();
-    };
+    }
 
     function updateUI() {
       const cCount = Object.keys(state.classifierAnswers).length;
       const vCount = Object.keys(state.scores).length;
       const total = CLASSIFIERS.length + VARIABLES.length;
-      
       document.getElementById("dotCount").innerText = `${cCount + vCount}/${total}`;
-      
       let dotsHtml = "";
       for(let i=0; i<total; i++) dotsHtml += `<div class="dot ${(i < cCount + vCount) ? 'filled' : ''}"></div>`;
       document.getElementById("dots").innerHTML = dotsHtml;
-
-      if (cCount + vCount === total) document.getElementById("revealBox").classList.add("show");
+      if (cCount + vCount === total) document.getElementById("revealBox").style.display = "block";
     }
 
-    document.getElementById("revealBtn").onclick = () => {
+    document.getElementById("revealBtn").onclick = async function() {
+      const btn = this; btn.innerText = "CALCULATING & SYNCING..."; btn.disabled = true;
+      
       let score = VARIABLES.reduce((acc, v) => acc + ((state.scores[v.id] || 0) / v.maxScore) * v.weight, 0);
       let grade = score >= 90 ? "A+" : score >= 82 ? "A" : score >= 72 ? "B+" : score >= 58 ? "B" : "C";
-      let tier = state.classifierAnswers.role === "referral" ? "Tier 1 Referral" : grade === "A+" ? "Tier 3 — High Activation" : "Tier 1-2 Growth";
-      
-      const results = document.getElementById("resultsArea");
-      results.innerHTML = `<div class="results-top"><div class="res-grade">${grade}</div><div class="res-tier">${tier}</div><div>Raw Metric: ${score.toFixed(1)}%</div></div><div class="res-body"><button class="reset-btn" onclick="location.reload()">New Assessment</button></div>`;
-      results.classList.add("show");
-      results.scrollIntoView({ behavior: 'smooth' });
+      let tier = state.classifierAnswers.role === "referral" ? "Tier 1 Referral" : (grade.startsWith("A") ? "Tier 3 — High Activation" : "Tier 1-2 Growth");
+      let name = document.getElementById("officeName").value || "Anonymous Agent";
+
+      const payload = { officeName: name, role: state.classifierAnswers.role, transactions: state.classifierAnswers.txcount, grade: grade, tier: tier, score: score.toFixed(1), notes: JSON.stringify(state.notes) };
+
+      try {
+        await fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+        const results = document.getElementById("resultsArea");
+        results.innerHTML = `<div class="results-top"><div class="res-grade">${grade}</div><div class="res-tier">${tier}</div><div>Raw Metric: ${score.toFixed(1)}%</div></div><div class="res-body"><button class="reveal-btn" style="background:#666" onclick="location.reload()">Start New Assessment</button></div>`;
+        results.classList.add("show");
+        results.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById("revealBox").style.display = "none";
+      } catch (e) { alert("Submission error. Check connection."); btn.disabled = false; btn.innerText = "Reveal Assessment Result"; }
     };
+
+    function accessAdmin() {
+      const key = prompt("Enter Admin Secret Key:");
+      if (key === SECRET_KEY) {
+        document.getElementById("assessmentView").style.display = "none";
+        document.getElementById("adminView").style.display = "block";
+        fetchAdminData();
+      } else if (key) { alert("Access Denied."); }
+    }
+
+    async function fetchAdminData() {
+      try {
+        const response = await fetch(GOOGLE_URL);
+        allLogs = await response.json();
+        renderAdminTable(allLogs.reverse());
+      } catch (e) { document.getElementById("adminStatus").innerText = "Error fetching data."; }
+    }
+
+    function renderAdminTable(data) {
+      const body = document.getElementById("adminBody");
+      body.innerHTML = "";
+      document.getElementById("adminStatus").innerText = `${data.length} Submissions Found`;
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        const gradeClass = row.finalgrade ? row.finalgrade.replace('+', '-plus') : 'C';
+        tr.innerHTML = `<td>${new Date(row.timestamp).toLocaleDateString()}</td><td style="font-weight:700">${row.officename}</td><td>${row.role}</td><td><span class="grade-pill ${gradeClass}">${row.finalgrade}</span></td><td>${row.rawscore}%</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    function filterAdmin() {
+      const query = document.getElementById("adminSearch").value.toLowerCase();
+      const filtered = allLogs.filter(r => r.officename.toLowerCase().includes(query) || r.role.toLowerCase().includes(query) || r.finalgrade.toLowerCase().includes(query));
+      renderAdminTable(filtered);
+    }
 
     initApp();
   </script>
