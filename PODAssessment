@@ -1,143 +1,645 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>POD Network — Office Readiness Assessment</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:         #F5F0EB; --card:       #EDE8E1; --input:      #FAF7F4;
+    --border:     #D6CFC4; --border-act: #8B7355; --txt:        #2C2416;
+    --txt-mid:    #6B5B45; --txt-lt:     #9C8B75; --gold:       #8B7355;
+    --gold-lt:    #C4A882; --gold-pale:  #EDE0CC; --green:      #4A6741;
+    --green-bg:   #E8EFE7; --blue:       #3D5A6B; --blue-bg:    #E4EDF2;
+    --orange:     #7A4F2E; --orange-bg:  #F5EAE0; --red:        #6B3328;
+    --red-bg:     #F5E8E6; --white:      #FDFAF7; --accent:     #3D6B62;
+    --accent-mid: #5E9189; --accent-pale:#E4F0EE;
+  }
+  body { font-family: Georgia,'Times New Roman',serif; background:var(--bg); color:var(--txt); min-height:100vh; padding-bottom:80px; }
 
-  :root {
-    --bg:          #F5F0EB;
-    --card:        #EDE8E1;
-    --input:       #FAF7F4;
-    --border:      #D6CFC4;
-    --border-act:  #8B7355;
-    --txt:         #2C2416;
-    --txt-mid:     #6B5B45;
-    --txt-lt:      #9C8B75;
-    --gold:        #8B7355;
-    --gold-lt:     #C4A882;
-    --gold-pale:   #EDE0CC;
-    --green:       #4A6741;
-    --green-bg:    #E8EFE7;
-    --blue:        #3D5A6B;
-    --blue-bg:     #E4EDF2;
-    --orange:      #7A4F2E;
-    --orange-bg:   #F5EAE0;
-    --red:         #6B3328;
-    --red-bg:      #F5E8E6;
-    --white:       #FDFAF7;
-    --sand-mid:    #EDE8E1;
-  }
+/* ADMIN BANNER */
+.admin-banner { background:var(–accent); color:white; text-align:center; padding:8px; font-family:sans-serif; font-size:11px; letter-spacing:2px; display:none; }
+.admin-banner.on { display:block; }
 
-  body {
-    font-family: Georgia, 'Times New Roman', serif;
-    background: var(--bg);
-    color: var(--txt);
-    min-height: 100vh;
-    padding-bottom: 60px;
-  }
+/* HEADER */
+.header { background:var(–white); border-bottom:1px solid var(–border); padding:22px 26px 18px; position:sticky; top:0; z-index:50; }
+.header-inner { max-width:740px; margin:0 auto; }
+.header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+.eyebrow { font-family:sans-serif; font-size:10px; letter-spacing:4px; color:var(–gold-lt); text-transform:uppercase; margin-bottom:5px; }
+.header h1 { font-size:20px; font-weight:bold; color:var(–txt); letter-spacing:-.5px; line-height:1.2; }
+.header-sub { font-family:sans-serif; font-size:12px; color:var(–txt-lt); margin-top:3px; }
+.progress-wrap { display:flex; align-items:center; gap:5px; flex-wrap:wrap; padding-top:3px; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(–border); transition:background .3s; flex-shrink:0; }
+.dot.filled { background:var(–gold); }
+.dot.classifier { background:var(–border); }
+.dot.classifier.filled { background:var(–accent); }
+.prog-lbl { font-family:sans-serif; font-size:11px; color:var(–txt-lt); margin-left:3px; }
+.office-input { margin-top:13px; width:100%; background:var(–card); border:1px solid var(–border); color:var(–txt); padding:9px 13px; border-radius:6px; font-size:13px; font-family:sans-serif; outline:none; }
+.office-input::placeholder { color:#B8A898; }
 
-  .header {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 24px 28px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .header-inner { max-width: 720px; margin: 0 auto; }
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .eyebrow {
-    font-family: sans-serif;
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--gold-lt);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .header h1 {
-    font-size: 21px;
-    font-weight: bold;
-    color: var(--txt);
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-  }
-  .header-sub {
-    font-family: sans-serif;
-    font-size: 12px;
-    color: var(--txt-lt);
-    margin-top: 3px;
-  }
-  .progress-dots { display: flex; align-items: center; gap: 6px; padding-top: 4px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
-  .dot.filled { background: var(--gold); }
-  .progress-label { font-family: sans-serif; font-size: 11px; color: var(--txt-lt); margin-left: 4px; }
-  .office-input {
-    margin-top: 14px;
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--txt);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: sans-serif;
-    outline: none;
-  }
-  .office-input::placeholder { color: #B8A898; }
+/* ROUTING NOTICE */
+.routing-notice { margin:0 auto; max-width:740px; padding:0 18px; }
+.routing-badge { display:none; margin:12px 0 0; padding:10px 14px; border-radius:8px; font-family:sans-serif; font-size:12px; line-height:1.5; border-left:4px solid; }
+.routing-badge.show { display:block; }
+.routing-badge.referral { background:#FFF9F0; border-color:var(–orange); color:var(–orange); }
+.routing-badge.solo     { background:var(–blue-bg); border-color:var(–blue); color:var(–blue); }
+.routing-badge.team     { background:var(–green-bg); border-color:var(–green); color:var(–green); }
+.routing-badge.leader   { background:var(–gold-pale); border-color:var(–gold); color:var(–gold); }
 
-  .cards { max-width: 720px; margin: 24px auto 0; padding: 0 18px; }
+/* CARDS */
+.cards { max-width:740px; margin:18px auto 0; padding:0 18px; }
+.card { background:var(–white); border:1px solid var(–border); border-radius:10px; padding:19px 21px; margin-bottom:13px; transition:border-color .2s; }
+.card.answered { border-color:var(–border-act); }
+.card.classifier-card { border-color:var(–accent); background:var(–accent-pale); }
+.card.classifier-card.answered { border-color:var(–accent); }
+.card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:11px; }
+.card-meta { flex:1; }
+.card-title-row { display:flex; align-items:center; gap:7px; margin-bottom:3px; flex-wrap:wrap; }
+.q-number { font-family:sans-serif; font-size:10px; color:var(–white); background:var(–gold); padding:2px 7px; border-radius:10px; flex-shrink:0; }
+.q-number.classifier { background:var(–accent); }
+.weight-badge { font-family:sans-serif; font-size:10px; color:var(–accent); background:var(–accent-pale); padding:2px 8px; border-radius:10px; border:1px solid var(–accent); display:none; }
+.weight-badge.on { display:inline; }
+.card-title { font-size:14px; font-weight:bold; color:var(–txt); }
+.card-desc { font-family:sans-serif; font-size:12px; color:var(–txt-lt); margin-top:2px; }
+.card-score-display { font-family:sans-serif; font-size:26px; font-weight:bold; color:var(–gold); margin-left:12px; line-height:1; flex-shrink:0; }
+.card-score-display.acc { color:var(–accent); }
 
-  .card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 22px;
-    margin-bottom: 12px;
-    transition: border-color 0.2s;
-  }
-  .card.answered { border-color: var(--border-act); }
-  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-  .card-meta { flex: 1; }
-  .card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-  .weight-badge {
-    font-family: sans-serif;
-    font-size: 10px;
-    color: var(--txt-lt);
-    background: var(--card);
-    padding: 2px 8px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .card-title { font-size: 14px; font-weight: bold; color: var(--txt); }
-  .card-desc { font-family: sans-serif; font-size: 12px; color: var(--txt-lt); }
-  .card-score-display { font-family: sans-serif; font-size: 28px; font-weight: bold; color: var(--gold); margin-left: 14px; line-height: 1; }
+/* GUIDANCE */
+.field-guidance { background:var(–accent-pale); border-left:3px solid var(–accent); border-radius:0 6px 6px 0; padding:9px 13px; margin-bottom:11px; font-family:sans-serif; font-size:12px; color:var(–txt-mid); line-height:1.55; }
+.field-guidance strong { color:var(–accent); }
 
-  .options { display: flex; flex-direction: column; gap: 5px; }
-  .option-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 13px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--input);
-    color: var(--txt-mid);
-    font-family: sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.15s;
-    width: 100%;
-  }
-  .option-btn.selected { border-color: var(--gold); background: var(--gold-pale); color: var(--txt); }
-  .option-btn:hover:not(.​​​​​​​​​​​​​​​​
+/* OPTIONS */
+.options { display:flex; flex-direction:column; gap:5px; }
+.option-btn { display:flex; align-items:flex-start; gap:9px; padding:9px 12px; border-radius:6px; border:1px solid var(–border); background:var(–input); color:var(–txt-mid); font-family:sans-serif; font-size:13px; cursor:pointer; text-align:left; transition:all .15s; width:100%; line-height:1.4; }
+.option-btn.selected { border-color:var(–gold); background:var(–gold-pale); color:var(–txt); }
+.option-btn.selected.acc-sel { border-color:var(–accent); background:var(–accent-pale); }
+.option-btn:hover:not(.selected) { border-color:var(–border-act); background:var(–card); }
+.option-num { width:21px; height:21px; border-radius:50%; background:var(–card); color:var(–txt-lt); font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; margin-top:1px; }
+.option-btn.selected .option-num { background:var(–gold); color:var(–white); }
+.option-btn.selected.acc-sel .option-num { background:var(–accent); color:var(–white); }
+
+/* PROGRESS BAR */
+.progress-bar { margin-top:11px; height:2px; background:var(–card); border-radius:1px; overflow:hidden; }
+.progress-fill { height:100%; background:var(–gold); border-radius:1px; transition:width .4s ease; }
+
+/* NOTES */
+.notes-label { font-family:sans-serif; font-size:11px; color:var(–txt-lt); margin-top:11px; margin-bottom:3px; text-transform:uppercase; letter-spacing:1.5px; }
+.notes-input { width:100%; background:var(–input); border:1px solid var(–border); color:var(–txt-mid); padding:8px 12px; border-radius:5px; font-size:12px; font-family:sans-serif; outline:none; resize:vertical; min-height:44px; line-height:1.5; }
+.notes-input::placeholder { color:#C4B8A8; font-style:italic; }
+
+/* ADMIN OVERRIDE */
+.admin-override { display:none; margin-top:9px; padding:9px 12px; background:var(–accent-pale); border:1px dashed var(–accent); border-radius:6px; }
+.admin-override.on { display:block; }
+.admin-override label { font-family:sans-serif; font-size:11px; color:var(–accent); letter-spacing:1.5px; text-transform:uppercase; display:block; margin-bottom:5px; }
+.admin-override select { font-family:sans-serif; font-size:13px; padding:4px 9px; border:1px solid var(–accent); border-radius:5px; background:white; color:var(–txt); outline:none; }
+.admin-override .ov-note { font-family:sans-serif; font-size:11px; color:var(–txt-lt); margin-top:4px; font-style:italic; }
+
+/* REVEAL */
+.reveal-btn { width:100%; padding:15px; margin-top:4px; background:var(–gold); border:none; border-radius:8px; cursor:pointer; font-size:12px; font-weight:bold; color:var(–white); font-family:sans-serif; letter-spacing:3px; text-transform:uppercase; transition:opacity .2s; }
+.reveal-btn:hover { opacity:.88; }
+
+/* RESULT */
+.result { margin-top:4px; border-radius:10px; overflow:hidden; border:1px solid var(–border); animation:rise .4s ease; }
+@keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+.result-grade-block { padding:34px 26px 26px; text-align:center; border-bottom:1px solid var(–border); }
+.result-eyebrow { font-family:sans-serif; font-size:10px; letter-spacing:4px; text-transform:uppercase; margin-bottom:9px; }
+.result-grade { font-size:80px; font-weight:bold; line-height:1; font-family:Georgia,serif; }
+.result-tier { font-family:sans-serif; font-size:15px; font-weight:bold; margin-top:7px; letter-spacing:.5px; }
+.result-verdict { font-family:sans-serif; font-size:13px; color:var(–txt-mid); margin-top:12px; line-height:1.65; max-width:520px; margin-left:auto; margin-right:auto; }
+.result-action { font-family:sans-serif; font-size:12px; margin-top:12px; padding:10px 16px; border-radius:8px; display:inline-block; font-weight:bold; }
+
+.result-breakdown { background:var(–white); padding:20px 24px; }
+.breakdown-label { font-family:sans-serif; font-size:10px; letter-spacing:3px; color:var(–txt-lt); text-transform:uppercase; margin-bottom:13px; }
+.breakdown-grid { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:16px; }
+.breakdown-card { flex:1 1 130px; background:var(–card); border:1px solid var(–border); border-radius:8px; padding:10px 12px; }
+.breakdown-card-label { font-family:sans-serif; font-size:10px; color:var(–txt-lt); margin-bottom:3px; line-height:1.4; }
+.breakdown-card-score { font-family:sans-serif; font-size:18px; font-weight:bold; color:var(–txt); }
+.breakdown-card-score span { font-size:11px; font-weight:normal; color:var(–txt-lt); }
+.breakdown-card-pts { font-family:sans-serif; font-size:11px; color:var(–gold); margin-top:1px; }
+.breakdown-card-note { font-family:sans-serif; font-size:10px; color:var(–txt-lt); margin-top:4px; font-style:italic; line-height:1.4; border-top:1px solid var(–border); padding-top:4px; }
+.breakdown-footer { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(–border); padding-top:13px; }
+.weighted-score { font-family:sans-serif; font-size:13px; color:var(–txt-mid); }
+.weighted-score strong { color:var(–txt); font-size:20px; }
+.weighted-score small { font-size:13px; color:var(–txt-lt); }
+.reset-btn { padding:8px 18px; background:transparent; color:var(–gold); border:1px solid var(–gold); border-radius:6px; cursor:pointer; font-size:11px; font-family:sans-serif; letter-spacing:2px; transition:all .15s; }
+.reset-btn:hover { background:var(–gold-pale); }
+.grade-scale-block { background:var(–card); padding:14px 24px; border-top:1px solid var(–border); }
+.grade-scale-label { font-family:sans-serif; font-size:10px; letter-spacing:3px; color:var(–txt-lt); text-transform:uppercase; margin-bottom:11px; }
+.grade-scale-row { display:flex; gap:5px; flex-wrap:wrap; }
+.grade-pill { background:var(–white); border:1px solid var(–border); border-radius:6px; padding:5px 10px; text-align:center; min-width:52px; transition:all .2s; }
+.grade-pill.active { background:var(–gold-pale); border-color:var(–gold); }
+.grade-pill-g { font-size:13px; font-weight:bold; color:var(–txt-lt); font-family:Georgia,serif; }
+.grade-pill.active .grade-pill-g { color:var(–gold); }
+.grade-pill-r, .grade-pill-t { font-family:sans-serif; font-size:9px; color:var(–txt-lt); margin-top:1px; }
+
+@media print { .admin-banner,.header{position:static} .reveal-btn,.reset-btn{display:none} }
+@media (max-width:480px) { .header{padding:16px 14px 14px} .cards{padding:0 11px} .card{padding:15px 14px} .result-grade{font-size:58px} .breakdown-card{flex:1 1 110px} }
+</style>
+
+</head>
+<body>
+
+<div class="admin-banner" id="adminBanner">⚙ ADMIN MODE — WEIGHTS, OVERRIDES & ROUTING LOGIC VISIBLE</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-row">
+      <div>
+        <div class="eyebrow">POD Network</div>
+        <h1>Office Readiness Assessment</h1>
+        <div class="header-sub">Answer based on what exists right now — not projections, not future plans.</div>
+      </div>
+      <div class="progress-wrap" id="progressWrap"></div>
+    </div>
+    <input class="office-input" id="officeName" type="text"
+           placeholder="Your name or team name (e.g. Sarah M. — solo agent, Scottsdale)">
+  </div>
+</div>
+
+<div class="routing-notice">
+  <div class="routing-badge" id="routingBadge"></div>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<script>
+const ADMIN = new URLSearchParams(window.location.search).get('admin') === 'true';
+if (ADMIN) document.getElementById('adminBanner').classList.add('on');
+
+// ── CLASSIFIER QUESTIONS (no weight, routing logic only) ──────────────────
+const CLASSIFIERS = [
+  {
+    id: "role",
+    label: "What best describes your role?",
+    isClassifier: true,
+    desc: "This determines how your results are interpreted and which program tier applies to you.",
+    guidance: "<strong>Select the option that describes you today</strong> — not what you're working toward.",
+    options: [
+      { value: "referral",  label: "EXP Commercial referral agent / classified referral division" },
+      { value: "solo",      label: "Solo agent — independent, no team" },
+      { value: "team",      label: "Agent on a team" },
+      { value: "leader",    label: "Team leader or mega team operator" },
+    ]
+  },
+  {
+    id: "txcount",
+    label: "How many transactions did you close in the last 12 months?",
+    isClassifier: true,
+    desc: "Individual or team total — whichever reflects your actual production.",
+    guidance: "<strong>Real numbers from the last 12 months.</strong> If you're a team leader, include your full team's transaction count.",
+    options: [
+      { value: "tx1", label: "10–20 transactions" },
+      { value: "tx2", label: "20–30 transactions" },
+      { value: "tx3", label: "30–50 transactions" },
+      { value: "tx4", label: "50–100 transactions" },
+      { value: "tx5", label: "100–150 transactions" },
+      { value: "tx6", label: "150–200 transactions" },
+      { value: "tx7", label: "200+ transactions" },
+    ]
+  },
+];
+
+// ── SCORING VARIABLES ─────────────────────────────────────────────────────
+const VARIABLES = [
+  {
+    id: "volume", label: "Team Production Volume", weight: 20, maxScore: 6,
+    desc: "Total transaction volume closed in the last 12 months — team or individual, whichever is higher.",
+    guidance: "<strong>Real numbers only.</strong> What did you actually close in the last 12 months? Per-agent average in field notes if known.",
+    notesPrompt: "Exact volume last 12 months + per-agent average if known",
+    adminReview: false,
+    options: [
+      "$5M – $25M total volume",
+      "$25M – $50M total volume",
+      "$50M – $100M total volume",
+      "$100M – $150M total volume",
+      "$150M – $200M total volume",
+      "$200M+ total volume",
+    ]
+  },
+  {
+    id: "capicon", label: "Agent Cap & Icon Rate", weight: 15, maxScore: 5,
+    desc: "How many agents on your team capped or iconed last year — the ratio matters more than the raw count.",
+    guidance: "<strong>Think ratio, not total.</strong> 100 agents / 5 icons is very different from 50 agents / 40 icons.",
+    notesPrompt: "Total agents / agents capped / agents iconed (e.g. 80 agents / 60 capped / 12 iconed)",
+    adminReview: false,
+    options: [
+      "Less than 20% of agents capped last year",
+      "20–40% capped, minimal icons",
+      "40–70% capped, some icons",
+      "70–90% capped, 10–25% iconed",
+      "90%+ capped, 25%+ iconed — high-performing team",
+    ]
+  },
+  {
+    id: "wealth", label: "Geographic Proximity to Wealth", weight: 15, maxScore: 5,
+    desc: "Where your office sits relative to high-net-worth residential and commercial corridors.",
+    guidance: "<strong>Think drive time and demographics.</strong> How far from where wealth lives, works, and transacts?",
+    notesPrompt: "Primary zip codes or neighborhoods your agents work in",
+    adminReview: false,
+    options: [
+      "Remote — no proximate wealth concentration",
+      "Adjacent to modest wealth corridors (20+ min away)",
+      "Near established middle-market commercial zones",
+      "Within high-wealth residential and commercial corridor",
+      "Embedded in primary luxury / HNWI and commercial hub",
+    ]
+  },
+  {
+    id: "leader", label: "Team Leader Engagement & Commitment", weight: 20, maxScore: 5,
+    desc: "The leader's demonstrated willingness to actively champion and sustain the program.",
+    guidance: "<strong>Score observed behavior, not stated interest.</strong> Passive interest is not commitment.",
+    notesPrompt: "Describe the team leader's current engagement with commercial initiatives",
+    adminReview: false,
+    options: [
+      "Passive / skeptical — needs significant convincing",
+      "Curious but uncommitted — watching from the sidelines",
+      "Supportive — will participate but won't actively drive",
+      "Committed — promotes, attends training, holds agents accountable",
+      "Champion — fully bought in, co-owns the program's success",
+    ]
+  },
+  {
+    id: "bizowner", label: "Business Owner CRM Relationships", weight: 15, maxScore: 5,
+    desc: "Relationships with business owners who make real estate decisions — single location to enterprise scale.",
+    guidance: "<strong>Think right now: who in your database owns or operates a business?</strong> Decision makers — the person who signs the lease, buys the building, expands or exits a franchise. If specific names come to mind, write them in field notes immediately.",
+    notesPrompt: "⭐ Name the most significant business owner or enterprise decision-maker in your database. What do they own or operate? (e.g. 'John S. — owns 7 Subway locations in Phoenix metro')",
+    adminReview: true,
+    adminNote: "MANUAL REVIEW — Override score based on field note content. A named enterprise relationship (20+ locations, corporate real estate manager, regional chain) should be a 5 regardless of option selected.",
+    options: [
+      "Know a single small business owner — single location",
+      "Know multiple small business owners — single locations",
+      "Know a C-suite exec, founder, or mid-size org leader",
+      "Know a multi-location operator or franchisee (5–20 locations)",
+      "Know an enterprise-level decision maker — 20+ locations, corporate RE manager, regional chain",
+    ]
+  },
+  {
+    id: "investor", label: "Institutional Investor & Landlord Portfolio Relationships", weight: 10, maxScore: 5,
+    desc: "Relationships with portfolio owners — people who own multiple properties at scale.",
+    guidance: "<strong>Portfolio owners, not casual investors.</strong> Who has called you about more than one property?",
+    notesPrompt: "⭐ List your top 1–5 portfolio owners or landlords by name and what they own",
+    adminReview: true,
+    adminNote: "MANUAL REVIEW — Cross-reference names against known commercial portfolio holders in this market.",
+    options: [
+      "No known portfolio owners or landlords in CRM",
+      "A handful of casual investors — 1–2 properties each",
+      "Moderate base — some multi-property owners",
+      "Strong relationships — several active landlords / portfolio owners",
+      "Deep network — multiple serious portfolio owners, active deal flow",
+    ]
+  },
+  {
+    id: "velocity", label: "Local Commercial Transaction Velocity", weight: 3, maxScore: 5,
+    desc: "How active the commercial market is in this territory right now.",
+    guidance: "<strong>Market conditions, not team activity.</strong> Are commercial deals happening here regardless of who is doing them?",
+    notesPrompt: "Any awareness of recent commercial activity in your market?",
+    adminReview: false,
+    options: [
+      "Very low — minimal commercial activity",
+      "Low — occasional deals, mostly residential market",
+      "Moderate — steady but not deep commercial deal flow",
+      "Active — consistent transactions across asset classes",
+      "High velocity — significant activity, multiple asset classes",
+    ]
+  },
+  {
+    id: "access", label: "Market Territory Accessibility", weight: 2, maxScore: 5,
+    desc: "Physical accessibility of the office and territory to commercial clients.",
+    guidance: "<strong>Think client friction.</strong> Would a commercial client find it easy to meet here?",
+    notesPrompt: "Any geographic limitations worth noting?",
+    adminReview: false,
+    options: [
+      "Difficult access — isolated geography, limited client traffic",
+      "Somewhat accessible but off main commercial corridors",
+      "Reasonably accessible — clients can reach the office",
+      "Well-positioned — near transit, freeways, commercial centers",
+      "Prime location — high visibility, easy access, strong commercial flow",
+    ]
+  },
+];
+
+const GRADE_SCALE = [
+  {g:"A+",range:"92–100",tier:"Tier 3", color:"#4A6741",bg:"#E8EFE7"},
+  {g:"A", range:"85–91", tier:"Tier 3", color:"#4A6741",bg:"#E8EFE7"},
+  {g:"A−",range:"78–84", tier:"T2→T3", color:"#4A6741",bg:"#E8EFE7"},
+  {g:"B+",range:"72–77", tier:"Tier 2", color:"#3D5A6B",bg:"#E4EDF2"},
+  {g:"B", range:"65–71", tier:"Tier 2", color:"#3D5A6B",bg:"#E4EDF2"},
+  {g:"B−",range:"58–64", tier:"T1→T2", color:"#7A4F2E",bg:"#F5EAE0"},
+  {g:"C+",range:"50–57", tier:"Tier 1", color:"#6B3328",bg:"#F5E8E6"},
+  {g:"C", range:"<50",   tier:"Tier 1", color:"#6B3328",bg:"#F5E8E6"},
+];
+
+// ── CONDITIONAL RESULT LOGIC ──────────────────────────────────────────────
+function getResult(score, role) {
+  // Referral agents — always Tier 1 regardless of score
+  if (role === "referral") {
+    return {
+      grade: "T1",
+      tier: "Tier 1 — Referral Program",
+      color: "#7A4F2E", bg: "#F5EAE0",
+      verdict: "As an EXP Commercial referral agent, Tier 1 Referral Bolt-On is your program. Submit commercial signals through the POD Network form. When a deal closes on your signal, you earn a referral fee. No commercial license work required.",
+      action: "Enroll in Tier 1 Referral Program",
+      actionBg: "#F5EAE0", actionColor: "#7A4F2E",
+      locked: true,
+    };
+  }
+
+  // Solo agents — can qualify for Tier 1 or referral to team leader for Tier 2+
+  if (role === "solo") {
+    if (score >= 72) return {
+      grade: score >= 85 ? "A" : score >= 78 ? "A−" : "B+",
+      tier: "Tier 1 Now → Refer to Team Leader",
+      color: "#3D5A6B", bg: "#E4EDF2",
+      verdict: "Your individual production and relationship scores are strong. You are a Tier 1 candidate now, and your profile suggests your team or team leader may qualify for Tier 2. Share this assessment with your team leader — your scores could accelerate their tier evaluation.",
+      action: "Enroll in Tier 1 · Share with your team leader",
+      actionBg: "#E4EDF2", actionColor: "#3D5A6B",
+      locked: false,
+    };
+    if (score >= 58) return {
+      grade: score >= 65 ? "B" : "B−",
+      tier: "Tier 1 — Referral Program",
+      color: "#7A4F2E", bg: "#F5EAE0",
+      verdict: "Your individual scores qualify you for Tier 1 participation. Submit commercial signals through the POD Network form and earn referral fees when deals close. As a solo agent, Tier 2 and Tier 3 require team leader sponsorship — if you're considering joining a team, these scores will help make the case.",
+      action: "Enroll in Tier 1 Referral Program",
+      actionBg: "#F5EAE0", actionColor: "#7A4F2E",
+      locked: false,
+    };
+    return {
+      grade: "C+",
+      tier: "Tier 1 — Referral Only",
+      color: "#6B3328", bg: "#F5E8E6",
+      verdict: "Tier 1 Referral program is your entry point. Focus on building commercial signal habits and growing your CRM relationships. Revisit in 12 months.",
+      action: "Begin Tier 1 signal submission",
+      actionBg: "#F5E8E6", actionColor: "#6B3328",
+      locked: false,
+    };
+  }
+
+  // Agents on a team — can qualify up to Tier 2, Tier 3 requires team leader action
+  if (role === "team") {
+    if (score >= 78) return {
+      grade: score >= 92 ? "A+" : score >= 85 ? "A" : "A−",
+      tier: "Strong Tier 2 Candidate — Team Leader Must Activate",
+      color: "#4A6741", bg: "#E8EFE7",
+      verdict: "Your individual scores are excellent. However, Tier 2 Embedded Unit programs are activated at the team leader level — your team leader needs to sign the MSA. Share this assessment with your leader. Your profile is strong enough to be a compelling case for them to engage.",
+      action: "Share with team leader — request Tier 2 activation",
+      actionBg: "#E8EFE7", actionColor: "#4A6741",
+      locked: false,
+    };
+    if (score >= 58) return {
+      grade: score >= 72 ? "B+" : score >= 65 ? "B" : "B−",
+      tier: "Tier 1 Now · Tier 2 via Team Leader",
+      color: "#3D5A6B", bg: "#E4EDF2",
+      verdict: "You qualify for Tier 1 participation now. Tier 2 requires your team leader's commitment — share this assessment to start that conversation. Focus on field notes for business owner and investor relationships, as strong relationship depth often moves a team leader to act.",
+      action: "Enroll in Tier 1 · Begin team leader conversation",
+      actionBg: "#E4EDF2", actionColor: "#3D5A6B",
+      locked: false,
+    };
+    return {
+      grade: "C+",
+      tier: "Tier 1 — Referral Only",
+      color: "#6B3328", bg: "#F5E8E6",
+      verdict: "Tier 1 Referral program is your starting point. Build your signal submission habit and grow your commercial relationship depth before pursuing a higher tier.",
+      action: "Begin Tier 1 signal submission",
+      actionBg: "#F5E8E6", actionColor: "#6B3328",
+      locked: false,
+    };
+  }
+
+  // Team leaders — full tier access
+  if (score >= 92) return {
+    grade:"A+", tier:"Tier 3 — Full Build", color:"#4A6741", bg:"#E8EFE7",
+    verdict:"All systems green. Volume, relationships, and leadership are aligned. Move immediately to Tier 3 White-Label build. Your business owner and investor field notes should be reviewed for immediate deal opportunities.",
+    action:"Proceed to Tier 3 — Schedule build session", actionBg:"#E8EFE7", actionColor:"#4A6741", locked:false,
+  };
+  if (score >= 85) return {
+    grade:"A", tier:"Tier 3 — Full Build", color:"#4A6741", bg:"#E8EFE7",
+    verdict:"Strong candidate across every dimension. Tier 3 is the right call. Minor gaps are manageable within the build phase. Begin Tier 3 conversations now.",
+    action:"Proceed to Tier 3", actionBg:"#E8EFE7", actionColor:"#4A6741", locked:false,
+  };
+  if (score >= 78) return {
+    grade:"A−", tier:"Tier 2 → Tier 3 Path", color:"#4A6741", bg:"#E8EFE7",
+    verdict:"Start with Tier 2 Embedded Unit. Establish proof of model over 6–9 months, then evaluate Tier 3. Your field notes may reveal relationship depth that accelerates this timeline.",
+    action:"Begin Tier 2 MSA process", actionBg:"#E8EFE7", actionColor:"#4A6741", locked:false,
+  };
+  if (score >= 72) return {
+    grade:"B+", tier:"Tier 2 — Embedded Unit", color:"#3D5A6B", bg:"#E4EDF2",
+    verdict:"Ready for an embedded commercial presence. 3–5 agents, MSA structure, multiple revenue layers. Don't wait — the relationship depth in your CRM is the asset.",
+    action:"Begin Tier 2 MSA process", actionBg:"#E4EDF2", actionColor:"#3D5A6B", locked:false,
+  };
+  if (score >= 65) return {
+    grade:"B", tier:"Tier 2 — Embedded Unit", color:"#3D5A6B", bg:"#E4EDF2",
+    verdict:"Tier 2 Embedded Unit is viable with conditions. Address flagged gaps before MSA signing. Review your business owner and investor field notes — strong named relationships can override a mid-range auto-score.",
+    action:"Review field notes · Begin Tier 2 conversation", actionBg:"#E4EDF2", actionColor:"#3D5A6B", locked:false,
+  };
+  if (score >= 58) return {
+    grade:"B−", tier:"Tier 1 → Tier 2 Watch", color:"#7A4F2E", bg:"#F5EAE0",
+    verdict:"Referral Bolt-On now. Reassess for Tier 2 in 12 months. Track your field note quality — a single strong enterprise relationship can change this conversation faster than 12 months of waiting.",
+    action:"Enroll in Tier 1 · Set 12-month reassessment", actionBg:"#F5EAE0", actionColor:"#7A4F2E", locked:false,
+  };
+  if (score >= 50) return {
+    grade:"C+", tier:"Tier 1 — Referral Only", color:"#6B3328", bg:"#F5E8E6",
+    verdict:"Referral program only today. No embedded unit viability. Focus on signal submission habits and growing your CRM relationship depth. Revisit in 12–18 months.",
+    action:"Enroll in Tier 1 Referral Program", actionBg:"#F5E8E6", actionColor:"#6B3328", locked:false,
+  };
+  return {
+    grade:"C", tier:"Tier 1 — Minimal", color:"#6B3328", bg:"#F5E8E6",
+    verdict:"Too many limiting factors for meaningful program participation today. Tier 1 only with modest expectations. Revisit in 12–18 months.",
+    action:"Tier 1 only — revisit in 12–18 months", actionBg:"#F5E8E6", actionColor:"#6B3328", locked:false,
+  };
+}
+
+// ── ROUTING BADGE ─────────────────────────────────────────────────────────
+const ROUTING = {
+  referral: { cls:"referral", text:"<strong>Referral Agent Route:</strong> Your results will reflect Tier 1 Referral program eligibility only. Complete the assessment so we can understand your relationship depth and market context." },
+  solo:     { cls:"solo",     text:"<strong>Solo Agent Route:</strong> Your results will reflect individual eligibility. Strong scores may qualify you to refer your team leader for Tier 2 consideration." },
+  team:     { cls:"team",     text:"<strong>Team Agent Route:</strong> Your results reflect your individual contribution. Tier 2+ requires team leader activation — your scores can be shared to start that conversation." },
+  leader:   { cls:"leader",   text:"<strong>Team Leader Route:</strong> Full tier evaluation. All three tiers are available based on your scores. Complete all questions for the most accurate recommendation." },
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+const classifierAnswers = {};
+const scores = {};
+const notes  = {};
+const adminOverrides = {};
+
+function getRole() { return classifierAnswers["role"] || null; }
+
+// ── BUILD UI ──────────────────────────────────────────────────────────────
+function buildUI() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+
+  const role = getRole();
+  const answeredScoring = Object.keys(scores).length;
+  const answeredClassifiers = Object.keys(classifierAnswers).length;
+  const totalDots = CLASSIFIERS.length + VARIABLES.length;
+
+  // Progress dots
+  const pw = document.getElementById('progressWrap');
+  pw.innerHTML =
+    CLASSIFIERS.map(c => `<div class="dot classifier${classifierAnswers[c.id]?' filled':''}"></div>`).join('') +
+    VARIABLES.map(v => `<div class="dot${scores[v.id]?' filled':''}"></div>`).join('') +
+    `<span class="prog-lbl">${answeredClassifiers + answeredScoring}/${totalDots}</span>`;
+
+  // Routing badge
+  const badge = document.getElementById('routingBadge');
+  if (role && ROUTING[role]) {
+    badge.className = `routing-badge show ${ROUTING[role].cls}`;
+    badge.innerHTML = ROUTING[role].text;
+  } else {
+    badge.className = 'routing-badge';
+  }
+
+  // Classifier cards
+  CLASSIFIERS.forEach((c, idx) => {
+    const sel = classifierAnswers[c.id];
+    const card = document.createElement('div');
+    card.className = `card classifier-card${sel ? ' answered' : ''}`;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-title-row">
+            <span class="q-number classifier">Q${idx+1}</span>
+            <span class="card-title">${c.label}</span>
+          </div>
+          <div class="card-desc">${c.desc}</div>
+        </div>
+        ${sel ? `<div class="card-score-display acc">✓</div>` : ''}
+      </div>
+      <div class="field-guidance">${c.guidance}</div>
+      <div class="options">
+        ${c.options.map((opt, i) => `
+          <button class="option-btn${sel===opt.value?' selected acc-sel':''}"
+                  onclick="selectClassifier('${c.id}','${opt.value}')">
+            <span class="option-num">${i+1}</span>
+            <span>${opt.label}</span>
+          </button>`).join('')}
+      </div>`;
+    container.appendChild(card);
+  });
+
+  // Scoring variable cards
+  VARIABLES.forEach((v, idx) => {
+    const sel = scores[v.id];
+    const pct = sel ? (sel / v.maxScore * 100) : 0;
+    const card = document.createElement('div');
+    card.className = `card${sel ? ' answered' : ''}`;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-title-row">
+            <span class="q-number">Q${CLASSIFIERS.length + idx + 1}</span>
+            <span class="weight-badge${ADMIN?' on':''}">${v.weight}% weight</span>
+            <span class="card-title">${v.label}</span>
+          </div>
+          <div class="card-desc">${v.desc}</div>
+        </div>
+        ${sel ? `<div class="card-score-display">${adminOverrides[v.id]||sel}</div>` : ''}
+      </div>
+      <div class="field-guidance">${v.guidance}</div>
+      <div class="options">
+        ${v.options.map((opt, i) => `
+          <button class="option-btn${sel===i+1?' selected':''}"
+                  onclick="selectScore('${v.id}',${i+1})">
+            <span class="option-num">${i+1}</span>
+            <span>${opt}</span>
+          </button>`).join('')}
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="notes-label">Field Notes</div>
+      <textarea class="notes-input" placeholder="${v.notesPrompt}"
+                oninput="saveNote('${v.id}',this.value)">${notes[v.id]||''}</textarea>
+
+```
+  ${v.adminReview ? `
+  <div class="admin-override${ADMIN?' on':''}">
+    <label>⚙ ADMIN — MANUAL SCORE OVERRIDE</label>
+    <select onchange="setOverride('${v.id}',this.value)">
+      <option value="">— Use auto-score —</option>
+      ${[1,2,3,4,5].map(n=>`<option value="${n}"${adminOverrides[v.id]==n?' selected':''}>Override: ${n}</option>`).join('')}
+    </select>
+    <div class="ov-note">${v.adminNote}</div>
+  </div>` : ''}
+`;
+container.appendChild(card);
+```
+
+});
+
+// Reveal
+const allAnswered = answeredClassifiers === CLASSIFIERS.length && answeredScoring === VARIABLES.length;
+if (allAnswered) {
+const ws2 = calcScore();
+const result = getResult(ws2, role);
+if (!window._revealed) {
+const btn = document.createElement(‘button’);
+btn.className = ‘reveal-btn’;
+btn.textContent = ‘Reveal Assessment Result’;
+btn.onclick = () => { window._revealed = true; buildUI(); };
+container.appendChild(btn);
+} else {
+renderResult(container, ws2, result);
+}
+}
+}
+
+function selectClassifier(id, val) {
+classifierAnswers[id] = val;
+window._revealed = false;
+buildUI();
+}
+function selectScore(id, score) { scores[id] = score; window._revealed = false; buildUI(); }
+function saveNote(id, val)      { notes[id] = val; }
+function setOverride(id, val)   { adminOverrides[id] = val ? parseInt(val) : null; window._revealed = false; buildUI(); }
+
+function resetAll() {
+Object.keys(classifierAnswers).forEach(k => delete classifierAnswers[k]);
+Object.keys(scores).forEach(k => delete scores[k]);
+Object.keys(notes).forEach(k => delete notes[k]);
+Object.keys(adminOverrides).forEach(k => delete adminOverrides[k]);
+document.getElementById(‘officeName’).value = ‘’;
+window._revealed = false;
+buildUI();
+}
+
+function calcScore() {
+return VARIABLES.reduce((acc, v) => {
+const raw = scores[v.id];
+if (!raw) return acc;
+const eff = adminOverrides[v.id] || raw;
+const max = v.maxScore || 5;
+return acc + (eff / max) * v.weight;
+}, 0);
+}
+
+function renderResult(container, ws2, result) {
+const name = document.getElementById(‘officeName’).value || ‘Assessment Result’;
+const role = getRole();
+const txVal = classifierAnswers[“txcount”] || “”;
+const txLabel = CLASSIFIERS[1].options.find(o => o.value === txVal)?.label || “”;
+
+const div = document.createElement(‘div’);
+div.className = ‘result’;
+div.innerHTML = `<div class="result-grade-block" style="background:${result.bg};border-bottom:1px solid #D6CFC4;"> <div class="result-eyebrow" style="color:${result.color}">${name}</div> <div class="result-grade" style="color:${result.color}">${result.grade}</div> <div class="result-tier" style="color:${result.color}">${result.tier}</div> <div class="result-verdict">${result.verdict}</div> <div class="result-action" style="background:${result.actionBg};color:${result.actionColor};">→ ${result.action}</div> ${txLabel ?`<div style="font-family:sans-serif;font-size:11px;color:${result.color};margin-top:10px;opacity:.7;">Transaction volume: ${txLabel}</div>`: ''} </div> <div class="result-breakdown"> <div class="breakdown-label">Score Breakdown</div> <div class="breakdown-grid"> ${VARIABLES.map(v => { const s = scores[v.id]; if (!s) return ''; const eff = adminOverrides[v.id] || s; const max = v.maxScore || 5; const contrib = ((eff/max)*v.weight).toFixed(1); const ovFlag = ADMIN && adminOverrides[v.id] ?` <span style="color:var(--accent);font-size:10px;">⚙${adminOverrides[v.id]}</span>`: ''; return`<div class="breakdown-card">
+<div class="breakdown-card-label">${v.label}</div>
+<div class="breakdown-card-score">${eff}${ovFlag}<span>/${max}</span></div>
+<div class="breakdown-card-pts">+${contrib} pts</div>
+${notes[v.id]?`<div class="breakdown-card-note">${notes[v.id]}</div>`:’’}
+</div>`; }).join('')} </div> <div class="breakdown-footer"> <div class="weighted-score">Score: <strong>${ws2.toFixed(1)}</strong><small> / 100</small></div> <button class="reset-btn" onclick="resetAll()">↺ New Assessment</button> </div> </div> <div class="grade-scale-block"> <div class="grade-scale-label">Grade Scale</div> <div class="grade-scale-row"> ${GRADE_SCALE.map(item => `
+<div class="grade-pill${item.g===result.grade?' active':''}">
+<div class="grade-pill-g">${item.g}</div>
+<div class="grade-pill-r">${item.range}</div>
+<div class="grade-pill-t">${item.tier}</div>
+</div>`).join('')} </div> </div>`;
+container.appendChild(div);
+}
+
+window._revealed = false;
+buildUI();
+</script>
+
+</body>
+</html>
