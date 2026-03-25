@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>POD Network — Office Readiness</title>
+  <title>POD Network — Office Readiness v3</title>
   <style>
     :root {
       --bg: #faf8f5;
@@ -33,16 +33,18 @@
     h1 { font-family: Georgia, serif; font-size: 32px; font-weight: 700; margin-bottom: 12px; color: #111; }
     .sub { font-size: 15px; color: var(--text-soft); margin-bottom: 24px; }
 
+    /* Top Inputs Area */
+    .lead-info-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .office-input {
+      width: 100%; background-color: #f7f3ed; border: 1px solid var(--line);
+      border-radius: 12px; padding: 14px 16px; font-size: 15px; outline: none;
+    }
+
     .progress-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .dots { display: flex; gap: 6px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background-color: #d8cec1; }
     .dot.filled { background-color: #a3937e; }
     .dot-count { font-size: 14px; font-weight: 600; color: var(--text-soft); }
-
-    .office-input {
-      width: 100%; background-color: #f7f3ed; border: 1px solid var(--line);
-      border-radius: 12px; padding: 14px 16px; font-size: 15px; margin-bottom: 30px; outline: none;
-    }
 
     .card {
       background-color: var(--card-bg); border: 1px solid #dbe6e4;
@@ -66,7 +68,6 @@
       border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px;
       cursor: pointer; transition: 0.2s;
     }
-    .option input { display: none; }
     .option-num {
       min-width: 26px; height: 26px; border-radius: 50%;
       background-color: #efede8; color: var(--text-soft);
@@ -79,7 +80,7 @@
     .meter { height: 6px; background-color: #e2d9cf; border-radius: 10px; margin-top: 20px; overflow: hidden; }
     .meter-fill { height: 100%; background-color: var(--gold); width: 0%; transition: width 0.3s ease; }
     .notes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 18px; margin-bottom: 6px; display: block; color: #a19586; }
-    textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; background: white; outline: none; }
+    textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; background: white; outline: none; resize: vertical; }
 
     .reveal-btn { width: 100%; padding: 18px; background-color: var(--teal); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
     
@@ -89,7 +90,7 @@
     .res-grade { font-family: Georgia, serif; font-size: 72px; font-weight: 700; margin-bottom: 12px; }
     .res-tier { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
 
-    /* Admin Specific Styling */
+    /* Admin View */
     .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 20px; font-size: 15px; }
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
     th { background: #eff5f4; text-align: left; padding: 15px; font-size: 11px; text-transform: uppercase; color: var(--teal); }
@@ -98,7 +99,6 @@
     .clickable-row { cursor: pointer; }
     .clickable-row:hover td { background-color: #f3f7f6 !important; }
 
-    /* Grade Color Pills */
     .grade-pill { padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 12px; display: inline-block; }
     .A-plus { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .A { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
@@ -106,7 +106,6 @@
     .B { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .C { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
-    /* Expandable Notes Drawer */
     .notes-drawer td { padding: 0; background: #fafafa; border-bottom: 1px solid var(--line); }
     .drawer-content { display: none; padding: 20px; font-size: 13px; line-height: 1.6; color: #444; border-left: 4px solid var(--gold); }
     .drawer-content.open { display: block; }
@@ -122,14 +121,18 @@
   <div id="assessmentView" class="shell">
     <div class="eyebrow">POD Network</div>
     <h1>Office Readiness Assessment</h1>
-    <p class="sub">Answer based on what exists right now — not projections.</p>
+    <p class="sub">Answer based on what exists right now — not projections, not future plans.</p>
+
+    <div class="lead-info-grid">
+      <input id="officeName" class="office-input" type="text" placeholder="Your name or team name (e.g. Sarah M. — solo agent, Scottsdale)" />
+      <input id="officeEmail" class="office-input" type="email" placeholder="Email Address" />
+      <input id="officePhone" class="office-input" type="tel" placeholder="Phone Number" />
+    </div>
 
     <div class="progress-bar">
       <div id="dots" class="dots"></div>
       <span id="dotCount" class="dot-count">0/10</span>
     </div>
-
-    <input id="officeName" class="office-input" type="text" placeholder="Your name or team name (e.g. Sarah M.)" />
 
     <div id="surveyContainer"></div>
 
@@ -145,13 +148,13 @@
   <div id="adminView" class="admin-shell">
     <div class="eyebrow">Secure Dashboard</div>
     <h1>Assessment Logs</h1>
-    <input type="text" id="adminSearch" class="search-bar" placeholder="Search by name, role, or grade..." onkeyup="filterAdmin()">
+    <input type="text" id="adminSearch" class="search-bar" placeholder="Search by name, role, email..." onkeyup="filterAdmin()">
     <div id="adminStatus" style="margin-bottom: 10px; font-size: 12px; font-weight: 700; color: var(--gold);">Syncing data...</div>
     <table id="adminTable">
       <thead>
         <tr>
           <th>Date</th>
-          <th>Name / Team (Tap row to read notes)</th>
+          <th>Name / Contact</th>
           <th>Role</th>
           <th>Grade</th>
           <th>Score</th>
@@ -163,35 +166,175 @@
   </div>
 
   <script>
-    // --- 🔑 PLUG IN YOUR URL AND YOUR KEY HERE ---
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzA9FEcLJPybwy_Be28YSXTCAAWOJOEys7ZaZwIeScQrUpHBWrNKGo_ur1MxdHfAHl4/exec"; 
     const SECRET_KEY = "POD2026"; 
 
-    // --- LOGIC ---
-    const state = { classifierAnswers: {}, scores: {}, notes: {} };
+    const state = { classifierAnswers: {}, scores: {}, notes: {}, checklistCounts: {} };
     let allLogs = [];
 
     const CLASSIFIERS = [
-      { id: "role", label: "What best describes your role?", desc: "Determines program tiering.", guidance: "Select your current status.", options: [
-        { value: "referral", label: "EXP Commercial referral agent" },
-        { value: "solo", label: "Solo agent — independent" },
-        { value: "team", label: "Agent on a team" },
-        { value: "leader", label: "Team leader / Mega team" }
-      ]},
-      { id: "txcount", label: "Transaction Count", desc: "Total last 12 months.", guidance: "Actual closed production.", options: [
-        { value: "tx1", label: "10–20" }, { value: "tx2", label: "20–30" }, { value: "tx3", label: "30–50" }, { value: "tx4", label: "50–100" }, { value: "tx5", label: "100+" }
-      ]}
+      { 
+        id: "role", 
+        label: "Q1: What best describes your role?", 
+        desc: "This determines how your results are interpreted and which program tier applies to you.", 
+        guidance: "Select the option that describes you today — not what you're working toward.", 
+        options: [
+          { value: "referral", label: "EXP Commercial referral agent / classified referral division" },
+          { value: "solo", label: "Solo agent — independent, no team" },
+          { value: "team", label: "Agent on a team" },
+          { value: "leader", label: "Team leader or mega team operator" }
+        ]
+      },
+      { 
+        id: "txcount", 
+        label: "Q2: How many transactions did you close in the last 12 months?", 
+        desc: "Individual or team total — whichever reflects your actual production.", 
+        guidance: "Real numbers from the last 12 months. If you're a team leader, include your full team's transaction count.", 
+        options: [
+          { value: "tx1", label: "10–20 transactions" }, 
+          { value: "tx2", label: "20–30 transactions" }, 
+          { value: "tx3", label: "30–50 transactions" }, 
+          { value: "tx4", label: "50–100 transactions" }, 
+          { value: "tx5", label: "100–150 transactions" },
+          { value: "tx6", label: "150–200 transactions" },
+          { value: "tx7", label: "200+ transactions" }
+        ]
+      }
     ];
 
     const VARIABLES = [
-      { id: "volume", label: "Team Production Volume", weight: 20, maxScore: 6, desc: "Volume closed in last 12 months.", guidance: "Real numbers only.", notesPrompt: "Volume details...", options: ["$5M – $25M", "$25M – $50M", "$50M – $100M", "$100M – $150M", "$150M – $200M", "$200M+"] },
-      { id: "capicon", label: "Agent Cap & Icon Rate", weight: 15, maxScore: 5, desc: "Ratio of agents capping.", guidance: "Efficiency metric.", notesPrompt: "Ratio details...", options: ["< 20%", "20–40%", "40–70%", "70–90%", "90%+"] },
-      { id: "wealth", label: "Geographic Proximity", weight: 15, maxScore: 5, desc: "Distance to wealth corridors.", guidance: "Market positioning.", notesPrompt: "Zip codes...", options: ["Remote", "Adjacent", "Near Zones", "Within Corridor", "Primary Hub"] },
-      { id: "engagement", label: "Leader Engagement", weight: 20, maxScore: 5, desc: "Commitment to the program.", guidance: "Score observed behavior.", notesPrompt: "Engagement notes...", options: ["Passive", "Curious", "Supportive", "Committed", "Champion"] },
-      { id: "crm", label: "Business Owner CRM", weight: 15, maxScore: 5, desc: "Contacts who are business owners.", guidance: "Decision maker count.", notesPrompt: "Key owners...", options: ["One", "Multiple", "C-Suite", "Multi-Location", "Enterprise"] },
-      { id: "investor", label: "Portfolio Relationships", weight: 10, maxScore: 5, desc: "Scale of investor contacts.", guidance: "Portfolio scale.", notesPrompt: "Landlord names...", options: ["None", "Casual", "Moderate", "Active", "Deep Network"] },
-      { id: "velocity", label: "Market Velocity", weight: 3, maxScore: 5, desc: "Local commercial activity level.", guidance: "Transaction frequency.", notesPrompt: "Market status...", options: ["Very Low", "Low", "Moderate", "Active", "High"] },
-      { id: "access", label: "Physical Accessibility", weight: 2, maxScore: 5, desc: "Office/Territory access.", guidance: "Client ease of meeting.", notesPrompt: "Location notes...", options: ["Difficult", "Fair", "Reasonable", "Good", "Prime"] }
+      { 
+        id: "volume", 
+        label: "Q3: Team Production Volume", 
+        weight: 20, 
+        maxScore: 6, 
+        desc: "Total transaction volume closed in the last 12 months — team or individual, whichever is higher.", 
+        guidance: "Real numbers only. What did you actually close in the last 12 months? Per-agent average in field notes if known.", 
+        notesPrompt: "Exact volume last 12 months + per-agent average if known", 
+        options: ["$5M – $25M total volume", "$25M – $50M total volume", "$50M – $100M total volume", "$100M – $150M total volume", "$150M – $200M total volume", "$200M+ total volume"] 
+      },
+      { 
+        id: "capicon", 
+        label: "Q4: Agent Cap & Icon Count", 
+        weight: 15, 
+        maxScore: 6, 
+        desc: "How many agents on the team have capped or reached Icon status in the last 12 months?", 
+        guidance: "Score based on raw agent count, not percentages. This reflects true production horsepower.", 
+        notesPrompt: "Break down the numbers (e.g., '6 capped, 2 reached Icon status this year')", 
+        options: [
+          "Less than 5 agents capping", 
+          "5 to 10 agents capping", 
+          "10 to 20 agents capping", 
+          "20 to 40 agents capping", 
+          "40 to 50 agents capping", 
+          "More than 50 agents capping"
+        ] 
+      },
+      { 
+        id: "wealth", 
+        label: "Q5: Geographic Proximity to Core Wealth Centers", 
+        weight: 15, 
+        maxScore: 6, 
+        desc: "How far is the office from the absolute 'Main & Main' of your local luxury/wealth corridor (e.g., La Jolla, Birdrock)?", 
+        guidance: "Score by travel friction. The closer to the core epicenter, the higher the score. Distance is measured by active travel time, not pure mileage.", 
+        notesPrompt: "List the specific neighborhoods/zip codes and travel times", 
+        options: [
+          "Remote (More than a 20+ minute drive from the wealth center)", 
+          "Adjacent (10 to 20 minute drive from the core center)", 
+          "Near Proximity (5 to 10 minute Uber/Drive from the core center)", 
+          "Local (Less than a 5-minute Uber or drive)",
+          "Immediate (5 to 10 minute walk from the core)", 
+          "Main & Main (Located right in the heart / within 1 to 2 blocks of the epicenter)"
+        ] 
+      },
+      { 
+        id: "engagement", 
+        label: "Q6: Team Leader Engagement & Commitment", 
+        weight: 20, 
+        maxScore: 5, 
+        desc: "How is the leader demonstrating their willingness to actively champion the program?", 
+        guidance: "Score observed behavior, not stated interest. Look for concrete actions.", 
+        notesPrompt: "What specific action did they take this week? (e.g., 'Assigned their marketing assistant to the project')", 
+        options: [
+          "Passive — Thinking, waiting to see", 
+          "Curious — Researching, asking for more data", 
+          "Supportive — Action taking, helping remove roadblocks", 
+          "Committed — Starting now, setting deadlines", 
+          "Champion — Assigning assets, co-owning the success"
+        ] 
+      },
+      { 
+        id: "crm_checklist", 
+        label: "Q7: Business Owner & Executive Network", 
+        weight: 10, 
+        maxScore: 8, 
+        desc: "Check off the high-level decision makers you have active relationships with in your CRM.", 
+        guidance: "Select all that apply (Multi-select). Checking more boxes yields a higher score (Each box = 1.25%).", 
+        notesPrompt: "Name the most significant executive or founder in your database and what they operate.", 
+        isCheckbox: true,
+        options: [
+          "Small Business Owner (Local, single-location)", 
+          "Multi-Location Operator (Franchisee or regional chain)", 
+          "Founder / Startup Chairman", 
+          "C-Suite Executive (CEO, CFO, COO)", 
+          "Energy / Utility Executive", 
+          "Aerospace / Space Executive", 
+          "Tech / SaaS Executive", 
+          "Enterprise Director (Large corporate real estate portfolios)"
+        ] 
+      },
+      { 
+        id: "investor_checklist", 
+        label: "Q8: Investor & Portfolio Relationships", 
+        weight: 5, 
+        maxScore: 8, 
+        desc: "Which tiers of investors or landlords do you have active, direct relationships with?", 
+        guidance: "Select all that apply (Multi-select). Checking more boxes yields a higher score.", 
+        notesPrompt: "Name your most significant investor contact and the scale of their portfolio.", 
+        isCheckbox: true,
+        options: [
+          "Residential Landlord (1-4 units)", 
+          "Small Multi-Family Landlord (5-20 units)", 
+          "Commercial Property Owner (Retail, Office, Industrial)", 
+          "Regional Syndicate / Private Equity Group", 
+          "REIT Acquisition Director", 
+          "Land Developer / Builder", 
+          "High-Net-Worth Individual (HNWI) placing capital", 
+          "Institutional Fund Manager"
+        ] 
+      },
+      { 
+        id: "velocity", 
+        label: "Q9: Local Commercial Transaction Velocity", 
+        weight: 10, 
+        maxScore: 5, 
+        desc: "How active the commercial market is in this territory right now.", 
+        guidance: "Market conditions, not team activity. Are commercial deals happening here regardless of who is doing them?", 
+        notesPrompt: "Any awareness of recent commercial activity in your market?", 
+        options: [
+          "Very low — minimal commercial activity", 
+          "Low — occasional deals, mostly residential market", 
+          "Moderate — steady but not deep commercial deal flow", 
+          "Active — consistent transactions across asset classes", 
+          "High velocity — significant activity, multiple asset classes"
+        ] 
+      },
+      { 
+        id: "access", 
+        label: "Q10: Market Territory Accessibility", 
+        weight: 5, 
+        maxScore: 5, 
+        desc: "Physical accessibility of the office and territory to commercial clients.", 
+        guidance: "Think client friction. Would a commercial client find it easy to meet here?", 
+        notesPrompt: "Any geographic limitations worth noting?", 
+        options: [
+          "Difficult access — isolated geography, limited client traffic", 
+          "Somewhat accessible but off main commercial corridors", 
+          "Reasonable accessible — clients can reach the office", 
+          "Well-positioned — near transit, freeways, commercial centers", 
+          "Prime location — high visibility, easy access, strong commercial flow"
+        ] 
+      }
     ];
 
     function initApp() {
@@ -200,6 +343,7 @@
 
       [...CLASSIFIERS, ...VARIABLES].forEach((q, i) => {
         const isVar = !!q.weight;
+        const isCheck = q.isCheckbox;
         html += `
           <div class="card" data-qid="${q.id}">
             <span class="q-badge">Question ${i + 1}</span>
@@ -209,7 +353,7 @@
             <div class="options">
               ${(isVar ? q.options : q.options.map(o => o.label)).map((opt, idx) => `
                 <label class="option">
-                  <input type="radio" name="${q.id}" value="${isVar ? idx + 1 : q.options[idx].value}" onclick="handleSelect(this, '${q.id}', '${isVar ? 'score' : 'classifier'}')">
+                  <input type="${isCheck ? 'checkbox' : 'radio'}" name="${q.id}" value="${isVar ? (idx + 1) : q.options[idx].value}" onclick="handleSelect(this, '${q.id}', '${isVar ? (isCheck ? 'checkbox' : 'score') : 'classifier'}')">
                   <span class="option-num">${idx + 1}</span>
                   <span>${isVar ? opt : q.options[idx].label}</span>
                 </label>
@@ -225,20 +369,29 @@
     }
 
     function handleSelect(input, qid, type) {
-      input.closest('.card').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-      input.closest('.option').classList.add('selected');
-      if (type === 'classifier') state.classifierAnswers[qid] = input.value;
-      else {
-        state.scores[qid] = Number(input.value);
+      if (type === 'checkbox') {
+        input.closest('.option').classList.toggle('selected', input.checked);
+        const card = input.closest('.card');
+        const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
+        state.checklistCounts[qid] = checkedCount;
         const v = VARIABLES.find(obj => obj.id === qid);
-        document.getElementById(`fill-${qid}`).style.width = `${(Number(input.value) / v.maxScore) * 100}%`;
+        document.getElementById(`fill-${qid}`).style.width = `${(checkedCount / v.maxScore) * 100}%`;
+      } else {
+        input.closest('.card').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        input.closest('.option').classList.add('selected');
+        if (type === 'classifier') state.classifierAnswers[qid] = input.value;
+        else {
+          state.scores[qid] = Number(input.value);
+          const v = VARIABLES.find(obj => obj.id === qid);
+          document.getElementById(`fill-${qid}`).style.width = `${(Number(input.value) / v.maxScore) * 100}%`;
+        }
       }
       updateUI();
     }
 
     function updateUI() {
       const cCount = Object.keys(state.classifierAnswers).length;
-      const vCount = Object.keys(state.scores).length;
+      const vCount = Object.keys(state.scores).length + Object.keys(state.checklistCounts).length;
       const total = CLASSIFIERS.length + VARIABLES.length;
       document.getElementById("dotCount").innerText = `${cCount + vCount}/${total}`;
       let dotsHtml = "";
@@ -250,17 +403,38 @@
     document.getElementById("revealBtn").onclick = async function() {
       const btn = this; btn.innerText = "CALCULATING & SYNCING..."; btn.disabled = true;
       
-      let score = VARIABLES.reduce((acc, v) => acc + ((state.scores[v.id] || 0) / v.maxScore) * v.weight, 0);
-      let grade = score >= 90 ? "A+" : score >= 82 ? "A" : score >= 72 ? "B+" : score >= 58 ? "B" : "C";
-      let tier = state.classifierAnswers.role === "referral" ? "Tier 1 Referral" : (grade.startsWith("A") ? "Tier 3 — High Activation" : "Tier 1-2 Growth");
-      let name = document.getElementById("officeName").value || "Anonymous Agent";
+      let rawSum = 0;
+      VARIABLES.forEach(v => {
+        if(v.isCheckbox) {
+          rawSum += ((state.checklistCounts[v.id] || 0) / v.maxScore) * v.weight;
+        } else {
+          rawSum += ((state.scores[v.id] || 0) / v.maxScore) * v.weight;
+        }
+      });
 
-      const payload = { officeName: name, role: state.classifierAnswers.role, transactions: state.classifierAnswers.txcount, grade: grade, tier: tier, score: score.toFixed(1), notes: JSON.stringify(state.notes) };
+      let grade = rawSum >= 90 ? "A+" : rawSum >= 82 ? "A" : rawSum >= 72 ? "B+" : rawSum >= 58 ? "B" : "C";
+      let tier = state.classifierAnswers.role === "referral" ? "Tier 1 Referral" : (grade.startsWith("A") ? "Tier 3 — High Activation" : "Tier 1-2 Growth");
+      
+      let name = document.getElementById("officeName").value || "Anonymous Agent";
+      let email = document.getElementById("officeEmail").value || "N/A";
+      let phone = document.getElementById("officePhone").value || "N/A";
+
+      const payload = { 
+        officeName: name, 
+        email: email, 
+        phone: phone, 
+        role: state.classifierAnswers.role, 
+        transactions: state.classifierAnswers.txcount, 
+        grade: grade, 
+        tier: tier, 
+        score: rawSum.toFixed(1), 
+        notes: JSON.stringify(state.notes) 
+      };
 
       try {
         await fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
         const results = document.getElementById("resultsArea");
-        results.innerHTML = `<div class="results-top"><div class="res-grade">${grade}</div><div class="res-tier">${tier}</div><div>Raw Metric: ${score.toFixed(1)}%</div></div><div class="res-body"><button class="reveal-btn" style="background:#666" onclick="location.reload()">Start New Assessment</button></div>`;
+        results.innerHTML = `<div class="results-top"><div class="res-grade">${grade}</div><div class="res-tier">${tier}</div><div>Raw Metric: ${rawSum.toFixed(1)}%</div></div><div class="res-body" style="padding:20px;"><button class="reveal-btn" style="background:#666" onclick="location.reload()">Start New Assessment</button></div>`;
         results.classList.add("show");
         results.scrollIntoView({ behavior: 'smooth' });
         document.getElementById("revealBox").style.display = "none";
@@ -293,15 +467,15 @@
         const tr = document.createElement("tr");
         tr.classList.add('clickable-row');
 
-        // Robust extraction logic to crush the 'undefined' bug
-        const nameVal = row.officename || row["Office Name"] || row["officename"] || row["officeName"] || "Anonymous Agent";
-        const roleVal = row.role || row["Role"] || row["role"] || "N/A";
+        const nameVal = row.officename || row["Office Name"] || row["officeName"] || "Anonymous Agent";
+        const emailVal = row.email || row["Email"] || "N/A";
+        const phoneVal = row.phone || row["Phone"] || "N/A";
+        const roleVal = row.role || row["Role"] || "N/A";
         const gradeVal = row.finalgrade || row["Final Grade"] || row["finalgrade"] || "C";
         const scoreVal = row.rawscore || row["Raw Score"] || row["rawscore"] || "0";
 
         const gradeClass = gradeVal.replace('+', '-plus');
 
-        // Rule for Standout Highlighting (Gold glow for A and A+)
         if (gradeVal === "A+" || gradeVal === "A") {
           tr.style.backgroundColor = "#fffef0";
           tr.style.borderLeft = "4px solid var(--gold)";
@@ -311,14 +485,16 @@
 
         tr.innerHTML = `
           <td>${new Date(row.timestamp).toLocaleDateString()}</td>
-          <td style="font-weight:700; color: #405e5b;">${nameVal}</td>
+          <td>
+            <div style="font-weight:700; color: #405e5b;">${nameVal}</div>
+            <div style="font-size:11px; color:#888;">${emailVal} | ${phoneVal}</div>
+          </td>
           <td>${roleVal}</td>
           <td><span class="grade-pill ${gradeClass}">${gradeVal}</span></td>
           <td style="font-weight:600;">${scoreVal}%</td>
         `;
         body.appendChild(tr);
 
-        // Building the Expandable Notes Drawer
         const drawerTr = document.createElement("tr");
         drawerTr.classList.add('notes-drawer');
 
@@ -363,10 +539,10 @@
     function filterAdmin() {
       const query = document.getElementById("adminSearch").value.toLowerCase();
       const filtered = allLogs.filter(r => {
-        const name = (r.officename || r["Office Name"] || r["officename"] || "").toLowerCase();
-        const role = (r.role || r["Role"] || r["role"] || "").toLowerCase();
-        const grade = (r.finalgrade || r["Final Grade"] || r["finalgrade"] || "").toLowerCase();
-        return name.includes(query) || role.includes(query) || grade.includes(query);
+        const name = (r.officename || r["Office Name"] || "").toLowerCase();
+        const role = (r.role || "").toLowerCase();
+        const email = (r.email || "").toLowerCase();
+        return name.includes(query) || role.includes(query) || email.includes(query);
       });
       renderAdminTable(filtered);
     }
