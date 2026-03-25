@@ -6,19 +6,23 @@
   <title>POD Network — Office Readiness Assessment</title>
   <style>
     :root {
-      --bg: #faf8f5; /* Cream background */
-      --card-bg: #eff5f4; /* Soft mint card background from screenshot */
-      --option-bg: #ffffff; /* Crisp white for standard options */
+      --bg: #faf8f5;
+      --card-bg: #eff5f4;
+      --option-bg: #ffffff;
       --line: #e3ded6;
       --text: #1a1a1a;
       --text-soft: #636b69;
       --gold: #b09c81;
       --teal: #405e5b;
-      --shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; padding: 0; }
+    /* ESSENTIAL HARD RESET: Prevents overlapping and floating items */
+    * { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -26,14 +30,15 @@
       color: var(--text);
       min-height: 100vh;
       padding: 30px 16px 60px;
+      display: block; /* Forces standard flow */
     }
 
     .shell {
       max-width: 800px;
       margin: 0 auto;
+      display: block;
     }
 
-    /* Header & Branding */
     .eyebrow {
       font-size: 11px;
       letter-spacing: 0.25em;
@@ -41,36 +46,40 @@
       font-weight: 600;
       color: var(--gold);
       margin-bottom: 8px;
+      display: block;
     }
 
     h1 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Georgia, serif;
       font-size: 32px;
       font-weight: 700;
       letter-spacing: -0.01em;
-      margin: 0 0 12px 0;
+      margin-bottom: 12px;
       color: #111;
+      display: block;
     }
 
     .sub {
       font-size: 15px;
       line-height: 1.5;
       color: var(--text-soft);
-      margin: 0 0 24px 0;
+      margin-bottom: 24px;
+      display: block;
     }
 
-    /* Progress Tracker */
     .progress-bar {
       display: flex;
+      display: -webkit-flex;
       align-items: center;
+      -webkit-align-items: center;
       gap: 12px;
       margin-bottom: 20px;
     }
 
     .dots {
       display: flex;
+      display: -webkit-flex;
       gap: 6px;
-      align-items: center;
     }
 
     .dot {
@@ -78,12 +87,9 @@
       height: 8px;
       border-radius: 50%;
       background-color: #d8cec1;
-      transition: background-color 0.2s;
     }
 
-    .dot.filled {
-      background-color: #a3937e;
-    }
+    .dot.filled { background-color: #a3937e; }
 
     .dot-count {
       font-size: 14px;
@@ -91,7 +97,6 @@
       color: var(--text-soft);
     }
 
-    /* Input Field */
     .office-input {
       width: 100%;
       background-color: #f7f3ed;
@@ -100,32 +105,25 @@
       padding: 14px 16px;
       font-size: 15px;
       margin-bottom: 30px;
-      color: var(--text);
+      display: block;
       outline: none;
-      transition: border-color 0.2s;
     }
 
-    .office-input:focus {
-      border-color: var(--gold);
-    }
-
-    .office-input::placeholder {
-      color: #a89d91;
-    }
-
-    /* Question Cards */
     .card {
       background-color: var(--card-bg);
       border: 1px solid #dbe6e4;
       border-radius: 20px;
       padding: 24px;
       margin-bottom: 24px;
-      box-shadow: var(--shadow);
+      display: block; /* Ensures card doesn't collapse */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
 
     .q-header {
       display: flex;
+      display: -webkit-flex;
       align-items: flex-start;
+      -webkit-align-items: flex-start;
       gap: 12px;
       margin-bottom: 12px;
     }
@@ -139,10 +137,13 @@
       font-size: 12px;
       font-weight: 700;
       display: flex;
+      display: -webkit-flex;
       align-items: center;
+      -webkit-align-items: center;
       justify-content: center;
+      -webkit-justify-content: center;
       flex-shrink: 0;
-      margin-top: 2px;
+      -webkit-flex-shrink: 0;
     }
 
     .q-title {
@@ -157,10 +158,10 @@
       line-height: 1.5;
       color: var(--text-soft);
       margin-bottom: 16px;
-      margin-left: 48px; /* Lines up with title text */
+      margin-left: 48px;
+      display: block;
     }
 
-    /* Side Sidebar Guide */
     .guide {
       border-left: 3px solid var(--teal);
       padding-left: 14px;
@@ -169,16 +170,14 @@
       line-height: 1.5;
       color: #4a4a4a;
       margin-bottom: 24px;
+      display: block;
     }
 
-    .guide strong {
-      color: var(--teal);
-    }
-
-    /* Options Stack */
     .options {
       display: flex;
+      display: -webkit-flex;
       flex-direction: column;
+      -webkit-flex-direction: column;
       gap: 10px;
       margin-left: 48px;
     }
@@ -189,22 +188,21 @@
       border-radius: 12px;
       padding: 16px;
       display: flex;
+      display: -webkit-flex;
       align-items: center;
+      -webkit-align-items: center;
       gap: 14px;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s ease;
     }
 
-    .option:hover {
-      border-color: #bca98f;
-    }
-
+    /* HIDES the default round browser bubble entirely */
     .option input[type="radio"] {
       position: absolute;
       opacity: 0;
       width: 0;
       height: 0;
+      pointer-events: none;
     }
 
     .option-num {
@@ -214,12 +212,15 @@
       background-color: #efede8;
       color: var(--text-soft);
       display: flex;
+      display: -webkit-flex;
       align-items: center;
+      -webkit-align-items: center;
       justify-content: center;
+      -webkit-justify-content: center;
       font-size: 12px;
       font-weight: 700;
       flex-shrink: 0;
-      transition: all 0.2s ease;
+      -webkit-flex-shrink: 0;
     }
 
     .option-text {
@@ -229,11 +230,9 @@
       line-height: 1.4;
     }
 
-    /* Selection State styling */
     .option.selected {
       border-color: var(--gold);
       background-color: #fdfaf5;
-      box-shadow: 0 4px 12px rgba(176,156,129,0.1);
     }
 
     .option.selected .option-num {
@@ -241,7 +240,6 @@
       color: white;
     }
 
-    /* Meter / Slider Display */
     .meter {
       height: 6px;
       background-color: #e2d9cf;
@@ -249,6 +247,7 @@
       margin-top: 20px;
       margin-left: 48px;
       overflow: hidden;
+      display: block;
     }
 
     .meter-fill {
@@ -258,7 +257,6 @@
       transition: width 0.3s ease;
     }
 
-    /* Notes Area */
     .notes-label {
       font-size: 11px;
       font-weight: 700;
@@ -268,6 +266,7 @@
       margin-top: 18px;
       margin-left: 48px;
       margin-bottom: 6px;
+      display: block;
     }
 
     textarea.notes {
@@ -282,23 +281,16 @@
       resize: vertical;
       outline: none;
       background-color: #ffffff;
-      transition: border-color 0.2s;
+      display: block;
     }
 
-    textarea.notes:focus {
-      border-color: var(--gold);
-    }
-
-    /* Result Actions */
     .reveal-box {
       margin-top: 30px;
       display: none;
       text-align: center;
     }
 
-    .reveal-box.show {
-      display: block;
-    }
+    .reveal-box.show { display: block; }
 
     .reveal-btn {
       width: 100%;
@@ -312,15 +304,8 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s;
     }
 
-    .reveal-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    /* Final Scoring Styles */
     .results-area {
       display: none;
       margin-top: 30px;
@@ -328,17 +313,14 @@
       border: 1px solid var(--line);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: var(--shadow);
     }
 
-    .results-area.show {
-      display: block;
-    }
+    .results-area.show { display: block; }
 
     .results-top {
       padding: 30px;
       text-align: center;
-      background-color: #eff5f4; /* Same mint for continuity */
+      background-color: #eff5f4;
     }
 
     .res-grade {
@@ -354,9 +336,7 @@
       margin-bottom: 12px;
     }
 
-    .res-body {
-      padding: 24px;
-    }
+    .res-body { padding: 24px; }
 
     .reset-btn {
       margin-top: 20px;
@@ -371,7 +351,6 @@
       font-size: 13px;
     }
 
-    /* Adjust margins for smaller phones */
     @media (max-width: 600px) {
       .q-desc, .guide, .options, textarea.notes, .meter, .notes-label {
         margin-left: 0;
@@ -422,7 +401,7 @@
         id: "txcount",
         label: "How many transactions did you close in the last 12 months?",
         desc: "Individual or team total — whichever reflects your actual production.",
-        guidance: "<strong>Real numbers from the last 12 months.</strong> If you're a team leader, include your full team's transaction count.",
+        guidance: "Real numbers from the last 12 months. If you're a team leader, include your full team's transaction count.",
         options: [
           { value: "tx1", label: "10–20 transactions" },
           { value: "tx2", label: "20–30 transactions" },
@@ -442,7 +421,7 @@
         weight: 20,
         maxScore: 6,
         desc: "Total transaction volume closed in the last 12 months — team or individual, whichever is higher.",
-        guidance: "<strong>Real numbers only.</strong> What did you actually close in the last 12 months?",
+        guidance: "Real numbers only. What did you actually close in the last 12 months?",
         notesPrompt: "Exact volume last 12 months + per-agent average if known",
         options: ["$5M – $25M total volume", "$25M – $50M total volume", "$50M – $100M total volume", "$100M – $150M total volume", "$150M – $200M total volume", "$200M+ total volume"]
       },
@@ -452,7 +431,7 @@
         weight: 15,
         maxScore: 5,
         desc: "How many agents on your team capped or iconed last year.",
-        guidance: "<strong>Think ratio, not total.</strong> 100 agents / 5 icons is very different from 50 agents / 40 icons.",
+        guidance: "Think ratio, not total. 100 agents / 5 icons is very different from 50 agents / 40 icons.",
         notesPrompt: "Total agents / agents capped / agents iconed",
         options: ["Less than 20% capped last year", "20–40% capped, minimal icons", "40–70% capped, some icons", "70–90% capped, 10–25% iconed", "90%+ capped, 25%+ iconed"]
       },
@@ -472,7 +451,7 @@
         weight: 20,
         maxScore: 5,
         desc: "The leader's demonstrated willingness to actively champion and sustain the program.",
-        guidance: "<strong>Score observed behavior, not stated interest.</strong> Passive interest is not commitment.",
+        guidance: "Score observed behavior, not stated interest. Passive interest is not commitment.",
         notesPrompt: "Describe current engagement with commercial initiatives",
         options: ["Passive / skeptical", "Curious but uncommitted", "Supportive — will participate", "Committed — promotes, attends training", "Champion — fully bought in"]
       },
@@ -524,7 +503,6 @@
       notes: {}
     };
 
-    // --- INIT APP RENDER ---
     function initApp() {
       const container = document.getElementById("surveyContainer");
       let html = "";
@@ -582,7 +560,6 @@
       updateUI();
     }
 
-    // --- CLICK EVENT LISTENERS ---
     function wireEvents() {
       document.getElementById("surveyContainer").addEventListener("change", (e) => {
         const action = e.target.dataset.action;
@@ -592,7 +569,6 @@
 
         if (action === "classifier-radio") {
           state.classifierAnswers[qid] = e.target.value;
-          
           const parentCard = e.target.closest(".card");
           parentCard.querySelectorAll('[data-role="option"]').forEach(lbl => lbl.classList.remove("selected"));
           e.target.closest(".option").classList.add("selected");
@@ -601,7 +577,6 @@
 
         if (action === "score-radio") {
           state.scores[qid] = Number(e.target.value);
-
           const parentCard = e.target.closest(".card");
           parentCard.querySelectorAll('[data-role="option"]').forEach(lbl => lbl.classList.remove("selected"));
           e.target.closest(".option").classList.add("selected");
@@ -616,7 +591,6 @@
       }, true);
     }
 
-    // --- DYNAMIC INTERFACE PAINTER ---
     function updateUI() {
       const elDots = document.getElementById("dots");
       const cAnswered = Object.keys(state.classifierAnswers).length;
@@ -629,24 +603,18 @@
 
       document.getElementById("dotCount").innerText = `${cAnswered + vAnswered}/${totalCount}`;
 
-      // Update Sliding Fill Metric
       document.querySelectorAll('[data-type="variable"]').forEach(card => {
         const qid = card.dataset.qid;
         const fill = card.querySelector('[data-target="meter-fill"]');
         const rawScore = state.scores[qid] || 0;
         const maxScore = VARIABLES.find(v => v.id === qid).maxScore;
-
         fill.style.width = rawScore ? `${(rawScore / maxScore) * 100}%` : '0%';
       });
 
-      // Show Results Reveal button once all answered
       const allDone = (cAnswered === CLASSIFIERS.length) && (vAnswered === VARIABLES.length);
-      if (allDone) {
-        document.getElementById("revealBox").classList.add("show");
-      }
+      if (allDone) document.getElementById("revealBox").classList.add("show");
     }
 
-    // --- CALC FINAL GRADE ENGINE ---
     function getWeightedScore() {
       return VARIABLES.reduce((acc, v) => {
         const raw = state.scores[v.id];
@@ -664,7 +632,6 @@
       return { grade: "C", tier: "Baseline Metric Readiness" };
     }
 
-    // --- REVEAL SUBMISSION AND REPORT ---
     document.getElementById("revealBtn").addEventListener("click", () => {
       const finalScore = getWeightedScore();
       const role = state.classifierAnswers['role'];
@@ -681,7 +648,7 @@
           <div style="font-size: 15px; color: #555;">Calculated Raw Metric Total: <strong>${finalScore.toFixed(1)}</strong> of 100.0%</div>
         </div>
         <div class="res-body">
-          <p style="margin-bottom: 24px; font-size: 14px; color: #4a4a4a; line-height:1.5;">Your structural office analysis metrics are securely computed and saved. Contact network ops to retrieve exact record integrations.</p>
+          <p style="margin-bottom: 24px; font-size: 14px; color: #4a4a4a; line-height:1.5;">Your structural office analysis metrics are securely computed and saved.</p>
           <button class="reset-btn" id="resetBtn">Run New Assessment</button>
         </div>
       `;
