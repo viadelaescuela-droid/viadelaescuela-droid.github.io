@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>POD Network — Office Readiness v3</title>
+  <title>POD Network — Office Readiness</title>
   <style>
     :root {
       --bg: #faf8f5;
@@ -33,7 +33,6 @@
     h1 { font-family: Georgia, serif; font-size: 32px; font-weight: 700; margin-bottom: 12px; color: #111; }
     .sub { font-size: 15px; color: var(--text-soft); margin-bottom: 24px; }
 
-    /* Top Inputs Area */
     .lead-info-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
     .office-input {
       width: 100%; background-color: #f7f3ed; border: 1px solid var(--line);
@@ -60,7 +59,6 @@
 
     .q-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; display: block; }
     .q-desc { font-size: 14px; color: var(--text-soft); margin-bottom: 16px; display: block; }
-    .guide { border-left: 3px solid var(--teal); padding-left: 14px; font-size: 14px; color: #4a4a4a; margin-bottom: 24px; }
 
     .options { display: flex; flex-direction: column; gap: 10px; }
     .option {
@@ -77,8 +75,6 @@
     .option.selected { border-color: var(--gold); background-color: #fdfaf5; }
     .option.selected .option-num { background-color: var(--gold); color: white; }
 
-    .meter { height: 6px; background-color: #e2d9cf; border-radius: 10px; margin-top: 20px; overflow: hidden; }
-    .meter-fill { height: 100%; background-color: var(--gold); width: 0%; transition: width 0.3s ease; }
     .notes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 18px; margin-bottom: 6px; display: block; color: #a19586; }
     textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; background: white; outline: none; resize: vertical; }
 
@@ -87,8 +83,6 @@
     .results-area { display: none; margin-top: 30px; background: white; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
     .results-area.show { display: block; }
     .results-top { padding: 40px 30px; text-align: center; background-color: #eff5f4; }
-    .res-grade { font-family: Georgia, serif; font-size: 72px; font-weight: 700; margin-bottom: 12px; }
-    .res-tier { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
 
     /* Admin View */
     .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 20px; font-size: 15px; }
@@ -120,11 +114,11 @@
 
   <div id="assessmentView" class="shell">
     <div class="eyebrow">POD Network</div>
-    <h1>Office Readiness Assessment</h1>
-    <p class="sub">Answer based on what exists right now — not projections, not future plans.</p>
+    <h1>Office Readiness Intake</h1>
+    <p class="sub">Complete your profile based on your current operations.</p>
 
     <div class="lead-info-grid">
-      <input id="officeName" class="office-input" type="text" placeholder="Your name or team name (e.g. Sarah M. — solo agent, Scottsdale)" />
+      <input id="officeName" class="office-input" type="text" placeholder="Your Name or Team Name (e.g. Sarah M.)" />
       <input id="officeEmail" class="office-input" type="email" placeholder="Email Address" />
       <input id="officePhone" class="office-input" type="tel" placeholder="Phone Number" />
     </div>
@@ -137,7 +131,7 @@
     <div id="surveyContainer"></div>
 
     <div id="revealBox" style="display:none; margin-top: 30px;">
-      <button class="reveal-btn" id="revealBtn">Reveal Assessment Result</button>
+      <button class="reveal-btn" id="revealBtn">Submit Intake Profile</button>
     </div>
 
     <div id="resultsArea" class="results-area"></div>
@@ -147,7 +141,7 @@
 
   <div id="adminView" class="admin-shell">
     <div class="eyebrow">Secure Dashboard</div>
-    <h1>Assessment Logs</h1>
+    <h1>Internal Assessment Logs</h1>
     <input type="text" id="adminSearch" class="search-bar" placeholder="Search by name, role, email..." onkeyup="filterAdmin()">
     <div id="adminStatus" style="margin-bottom: 10px; font-size: 12px; font-weight: 700; color: var(--gold);">Syncing data...</div>
     <table id="adminTable">
@@ -175,9 +169,8 @@
     const CLASSIFIERS = [
       { 
         id: "role", 
-        label: "Q1: What best describes your role?", 
-        desc: "This determines how your results are interpreted and which program tier applies to you.", 
-        guidance: "Select the option that describes you today — not what you're working toward.", 
+        label: "What best describes your role?", 
+        desc: "Determines program pathways.", 
         options: [
           { value: "referral", label: "EXP Commercial referral agent / classified referral division" },
           { value: "solo", label: "Solo agent — independent, no team" },
@@ -187,9 +180,8 @@
       },
       { 
         id: "txcount", 
-        label: "Q2: How many transactions did you close in the last 12 months?", 
+        label: "How many transactions did you close in the last 12 months?", 
         desc: "Individual or team total — whichever reflects your actual production.", 
-        guidance: "Real numbers from the last 12 months. If you're a team leader, include your full team's transaction count.", 
         options: [
           { value: "tx1", label: "10–20 transactions" }, 
           { value: "tx2", label: "20–30 transactions" }, 
@@ -205,21 +197,19 @@
     const VARIABLES = [
       { 
         id: "volume", 
-        label: "Q3: Team Production Volume", 
+        label: "Team Production Volume", 
         weight: 20, 
         maxScore: 6, 
         desc: "Total transaction volume closed in the last 12 months — team or individual, whichever is higher.", 
-        guidance: "Real numbers only. What did you actually close in the last 12 months? Per-agent average in field notes if known.", 
         notesPrompt: "Exact volume last 12 months + per-agent average if known", 
         options: ["$5M – $25M total volume", "$25M – $50M total volume", "$50M – $100M total volume", "$100M – $150M total volume", "$150M – $200M total volume", "$200M+ total volume"] 
       },
       { 
         id: "capicon", 
-        label: "Q4: Agent Cap & Icon Count", 
+        label: "Agent Cap & Icon Count", 
         weight: 15, 
         maxScore: 6, 
         desc: "How many agents on the team have capped or reached Icon status in the last 12 months?", 
-        guidance: "Score based on raw agent count, not percentages. This reflects true production horsepower.", 
         notesPrompt: "Break down the numbers (e.g., '6 capped, 2 reached Icon status this year')", 
         options: [
           "Less than 5 agents capping", 
@@ -232,45 +222,42 @@
       },
       { 
         id: "wealth", 
-        label: "Q5: Geographic Proximity to Core Wealth Centers", 
+        label: "Geographic Proximity to Core Commerce Hubs", 
         weight: 15, 
         maxScore: 6, 
-        desc: "How far is the office from the absolute 'Main & Main' of your local luxury/wealth corridor (e.g., La Jolla, Birdrock)?", 
-        guidance: "Score by travel friction. The closer to the core epicenter, the higher the score. Distance is measured by active travel time, not pure mileage.", 
+        desc: "How far is the office from the absolute main commercial centers of your local market?", 
         notesPrompt: "List the specific neighborhoods/zip codes and travel times", 
         options: [
-          "Remote (More than a 20+ minute drive from the wealth center)", 
+          "Remote (More than a 20+ minute drive from the commerce hub)", 
           "Adjacent (10 to 20 minute drive from the core center)", 
           "Near Proximity (5 to 10 minute Uber/Drive from the core center)", 
           "Local (Less than a 5-minute Uber or drive)",
           "Immediate (5 to 10 minute walk from the core)", 
-          "Main & Main (Located right in the heart / within 1 to 2 blocks of the epicenter)"
+          "Main & Main (Located right in the heart of the epicenter)"
         ] 
       },
       { 
         id: "engagement", 
-        label: "Q6: Team Leader Engagement & Commitment", 
+        label: "Program Activation", 
         weight: 20, 
         maxScore: 5, 
-        desc: "How is the leader demonstrating their willingness to actively champion the program?", 
-        guidance: "Score observed behavior, not stated interest. Look for concrete actions.", 
-        notesPrompt: "What specific action did they take this week? (e.g., 'Assigned their marketing assistant to the project')", 
+        desc: "How are you prepared to initiate this program?", 
+        notesPrompt: "What specific steps are you ready to take this week?", 
         options: [
-          "Passive — Thinking, waiting to see", 
-          "Curious — Researching, asking for more data", 
-          "Supportive — Action taking, helping remove roadblocks", 
-          "Committed — Starting now, setting deadlines", 
-          "Champion — Assigning assets, co-owning the success"
+          "In evaluation mode — looking for more data", 
+          "Planning — researching and auditing my database", 
+          "Action-oriented — removing friction to begin", 
+          "Set deadlines — actively starting and setting benchmarks", 
+          "Committed — assigning assets and resources to co-own success"
         ] 
       },
       { 
         id: "crm_checklist", 
-        label: "Q7: Business Owner & Executive Network", 
+        label: "Database and Network Makeup", 
         weight: 10, 
         maxScore: 8, 
         desc: "Check off the high-level decision makers you have active relationships with in your CRM.", 
-        guidance: "Select all that apply (Multi-select). Checking more boxes yields a higher score (Each box = 1.25%).", 
-        notesPrompt: "Name the most significant executive or founder in your database and what they operate.", 
+        notesPrompt: "Please specify any significant executive or founder relationships.", 
         isCheckbox: true,
         options: [
           "Small Business Owner (Local, single-location)", 
@@ -285,12 +272,11 @@
       },
       { 
         id: "investor_checklist", 
-        label: "Q8: Investor & Portfolio Relationships", 
+        label: "Investor & Portfolio Relationships", 
         weight: 5, 
         maxScore: 8, 
-        desc: "Which tiers of investors or landlords do you have active, direct relationships with?", 
-        guidance: "Select all that apply (Multi-select). Checking more boxes yields a higher score.", 
-        notesPrompt: "Name your most significant investor contact and the scale of their portfolio.", 
+        desc: "Which tiers of investors or landlords do you have active, direct relationships with in your network?", 
+        notesPrompt: "Briefly detail your most significant investor contact and the scale of their portfolio.", 
         isCheckbox: true,
         options: [
           "Residential Landlord (1-4 units)", 
@@ -299,17 +285,16 @@
           "Regional Syndicate / Private Equity Group", 
           "REIT Acquisition Director", 
           "Land Developer / Builder", 
-          "High-Net-Worth Individual (HNWI) placing capital", 
+          "High-Net-Worth Individual (HNWI)", 
           "Institutional Fund Manager"
         ] 
       },
       { 
         id: "velocity", 
-        label: "Q9: Local Commercial Transaction Velocity", 
+        label: "Local Commercial Transaction Velocity", 
         weight: 10, 
         maxScore: 5, 
         desc: "How active the commercial market is in this territory right now.", 
-        guidance: "Market conditions, not team activity. Are commercial deals happening here regardless of who is doing them?", 
         notesPrompt: "Any awareness of recent commercial activity in your market?", 
         options: [
           "Very low — minimal commercial activity", 
@@ -321,11 +306,10 @@
       },
       { 
         id: "access", 
-        label: "Q10: Market Territory Accessibility", 
+        label: "Market Territory Accessibility", 
         weight: 5, 
         maxScore: 5, 
         desc: "Physical accessibility of the office and territory to commercial clients.", 
-        guidance: "Think client friction. Would a commercial client find it easy to meet here?", 
         notesPrompt: "Any geographic limitations worth noting?", 
         options: [
           "Difficult access — isolated geography, limited client traffic", 
@@ -346,10 +330,9 @@
         const isCheck = q.isCheckbox;
         html += `
           <div class="card" data-qid="${q.id}">
-            <span class="q-badge">Question ${i + 1}</span>
+            <span class="q-badge">Section ${i + 1}</span>
             <span class="q-title">${q.label}</span>
             <span class="q-desc">${q.desc}</span>
-            <div class="guide">${q.guidance}</div>
             <div class="options">
               ${(isVar ? q.options : q.options.map(o => o.label)).map((opt, idx) => `
                 <label class="option">
@@ -359,8 +342,7 @@
                 </label>
               `).join('')}
             </div>
-            ${isVar ? `<div class="meter"><div class="meter-fill" id="fill-${q.id}"></div></div>
-            <span class="notes-label">Field Notes</span>
+            ${isVar ? `<span class="notes-label">Details & Context</span>
             <textarea class="notes" onblur="state.notes['${q.id}'] = this.value" placeholder="${q.notesPrompt}"></textarea>` : ''}
           </div>`;
       });
@@ -374,17 +356,11 @@
         const card = input.closest('.card');
         const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
         state.checklistCounts[qid] = checkedCount;
-        const v = VARIABLES.find(obj => obj.id === qid);
-        document.getElementById(`fill-${qid}`).style.width = `${(checkedCount / v.maxScore) * 100}%`;
       } else {
         input.closest('.card').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
         input.closest('.option').classList.add('selected');
         if (type === 'classifier') state.classifierAnswers[qid] = input.value;
-        else {
-          state.scores[qid] = Number(input.value);
-          const v = VARIABLES.find(obj => obj.id === qid);
-          document.getElementById(`fill-${qid}`).style.width = `${(Number(input.value) / v.maxScore) * 100}%`;
-        }
+        else state.scores[qid] = Number(input.value);
       }
       updateUI();
     }
@@ -401,7 +377,7 @@
     }
 
     document.getElementById("revealBtn").onclick = async function() {
-      const btn = this; btn.innerText = "CALCULATING & SYNCING..."; btn.disabled = true;
+      const btn = this; btn.innerText = "SUBMITTING..."; btn.disabled = true;
       
       let rawSum = 0;
       VARIABLES.forEach(v => {
@@ -434,11 +410,14 @@
       try {
         await fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
         const results = document.getElementById("resultsArea");
-        results.innerHTML = `<div class="results-top"><div class="res-grade">${grade}</div><div class="res-tier">${tier}</div><div>Raw Metric: ${rawSum.toFixed(1)}%</div></div><div class="res-body" style="padding:20px;"><button class="reveal-btn" style="background:#666" onclick="location.reload()">Start New Assessment</button></div>`;
+        results.innerHTML = `<div class="results-top">
+          <div style="font-size: 24px; font-weight: 800; color: #405e5b; margin-bottom:12px;">Profile Submitted Successfully</div>
+          <p style="color: #636b69; font-size: 15px;">Thank you for your submission. Our team will review your operation metrics and reach out to outline next steps and onboarding paths.</p>
+        </div>`;
         results.classList.add("show");
         results.scrollIntoView({ behavior: 'smooth' });
         document.getElementById("revealBox").style.display = "none";
-      } catch (e) { alert("Submission error. Check connection."); btn.disabled = false; btn.innerText = "Reveal Assessment Result"; }
+      } catch (e) { alert("Submission error. Check connection."); btn.disabled = false; btn.innerText = "Submit Intake Profile"; }
     };
 
     function accessAdmin() {
@@ -517,7 +496,7 @@
             }
           }
         }
-        if (!notesHtml) notesHtml = '<p style="color:#aaa; font-style:italic;">No field notes recorded for this assessment.</p>';
+        if (!notesHtml) notesHtml = '<p style="color:#aaa; font-style:italic;">No notes recorded.</p>';
 
         drawerTr.innerHTML = `
           <td colspan="5">
