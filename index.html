@@ -1,532 +1,1006 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>POD Network — Office Readiness</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POD Network | Qualification Engine</title>
   <style>
     :root {
-      --bg: #faf8f5;
-      --card-bg: #eff5f4;
-      --option-bg: #ffffff;
-      --line: #e3ded6;
-      --text: #1a1a1a;
-      --text-soft: #636b69;
-      --gold: #b09c81;
-      --teal: #405e5b;
+      --obsidian: #0a0a0f;
+      --arctic-white: #f4f6f7;
+      --abyss-navy: #162d4a;
+      --predator-gold: #b8973e;
+      --steel-wake: #2e3d47;
+      --danger: #b85a5a;
+      --ok: #67a67b;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 30px 16px 60px;
-      line-height: 1.5;
+      font-family: "Inter", "Segoe UI", Roboto, -apple-system, sans-serif;
+      background: var(--obsidian);
+      color: var(--arctic-white);
+      letter-spacing: 0.01em;
     }
 
-    .shell { max-width: 600px; margin: 0 auto; }
-    .admin-shell { max-width: 1000px; margin: 0 auto; display: none; }
-
-    .eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
-    h1 { font-family: Georgia, serif; font-size: 32px; font-weight: 700; margin-bottom: 12px; color: #111; }
-    .sub { font-size: 15px; color: var(--text-soft); margin-bottom: 24px; }
-
-    .lead-info-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-    .office-input {
-      width: 100%; background-color: #f7f3ed; border: 1px solid var(--line);
-      border-radius: 12px; padding: 14px 16px; font-size: 15px; outline: none;
+    .app-shell {
+      min-height: 100vh;
+      padding: 3rem 1.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    .progress-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .dots { display: flex; gap: 6px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background-color: #d8cec1; }
-    .dot.filled { background-color: #a3937e; }
-    .dot-count { font-size: 14px; font-weight: 600; color: var(--text-soft); }
-
-    .card {
-      background-color: var(--card-bg); border: 1px solid #dbe6e4;
-      border-radius: 20px; padding: 24px; margin-bottom: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    .panel {
+      width: min(1020px, 100%);
+      border: 1px solid color-mix(in srgb, var(--steel-wake) 80%, transparent);
+      background: linear-gradient(180deg, rgba(22, 45, 74, 0.32) 0%, rgba(10, 10, 15, 0.88) 32%);
+      padding: 2rem;
+      border-radius: 0.3rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     }
 
-    .q-badge {
-      background-color: var(--teal); color: white; padding: 4px 12px;
-      border-radius: 12px; font-size: 11px; font-weight: 700;
-      display: inline-block; margin-bottom: 12px; text-transform: uppercase;
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(46, 61, 71, 0.85);
+      padding-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
     }
 
-    .q-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; display: block; }
-    .q-desc { font-size: 14px; color: var(--text-soft); margin-bottom: 16px; display: block; }
-
-    .options { display: flex; flex-direction: column; gap: 10px; }
-    .option {
-      background-color: var(--option-bg); border: 1px solid var(--line);
-      border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px;
-      cursor: pointer; transition: 0.2s;
+    .kicker {
+      font-size: 0.72rem;
+      color: var(--predator-gold);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.17em;
+      margin: 0 0 0.4rem;
     }
-    .option-num {
-      min-width: 26px; height: 26px; border-radius: 50%;
-      background-color: #efede8; color: var(--text-soft);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; flex-shrink: 0;
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2.7vw, 2.25rem);
+      line-height: 1.15;
     }
-    .option.selected { border-color: var(--gold); background-color: #fdfaf5; }
-    .option.selected .option-num { background-color: var(--gold); color: white; }
 
-    .notes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 18px; margin-bottom: 6px; display: block; color: #a19586; }
-    textarea.notes { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 14px; background: white; outline: none; resize: vertical; }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: color-mix(in srgb, var(--arctic-white) 74%, var(--steel-wake));
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
 
-    .reveal-btn { width: 100%; padding: 18px; background-color: var(--teal); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
-    
-    .results-area { display: none; margin-top: 30px; background: white; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
-    .results-area.show { display: block; }
-    .results-top { padding: 40px 30px; text-align: center; background-color: #eff5f4; }
+    .progress-wrap { margin: 1rem 0 1.8rem; }
+    .progress-track {
+      height: 0.4rem;
+      width: 100%;
+      border: 1px solid rgba(46, 61, 71, 0.9);
+      background: rgba(10, 10, 15, 0.75);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #6b5730, var(--predator-gold));
+      transition: width 250ms ease;
+    }
 
-    /* Admin View */
-    .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 20px; font-size: 15px; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
-    th { background: #eff5f4; text-align: left; padding: 15px; font-size: 11px; text-transform: uppercase; color: var(--teal); }
-    td { padding: 15px; border-bottom: 1px solid var(--line); font-size: 14px; }
-    
-    .clickable-row { cursor: pointer; }
-    .clickable-row:hover td { background-color: #f3f7f6 !important; }
+    .screen {
+      min-height: 360px;
+      animation: fadeSlide 210ms ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    .grade-pill { padding: 5px 10px; border-radius: 6px; font-weight: 800; font-size: 12px; display: inline-block; }
-    .A-plus { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .A { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-    .B-plus { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .B { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .C { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+    .question-title {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      margin: 0 0 1rem;
+      line-height: 1.35;
+    }
 
-    .notes-drawer td { padding: 0; background: #fafafa; border-bottom: 1px solid var(--line); }
-    .drawer-content { display: none; padding: 20px; font-size: 13px; line-height: 1.6; color: #444; border-left: 4px solid var(--gold); }
-    .drawer-content.open { display: block; }
-    .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-    .note-block { background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--line); }
-    .note-block h4 { font-size: 11px; text-transform: uppercase; color: var(--teal); letter-spacing: 0.5px; margin-bottom: 6px; }
+    .lead {
+      color: color-mix(in srgb, var(--arctic-white) 83%, var(--steel-wake));
+      max-width: 70ch;
+      line-height: 1.6;
+    }
 
-    .admin-footer { margin-top: 100px; text-align: center; opacity: 0.3; font-size: 10px; cursor: pointer; }
+    .options { display: grid; gap: 0.7rem; margin-top: 1rem; }
+    .option, .choice-chip {
+      border: 1px solid rgba(46, 61, 71, 0.9);
+      background: rgba(10, 10, 15, 0.8);
+      color: var(--arctic-white);
+      padding: 0.85rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 180ms ease, background 180ms ease;
+      text-align: left;
+    }
+    .option:hover, .choice-chip:hover { border-color: color-mix(in srgb, var(--predator-gold) 70%, var(--steel-wake)); }
+    .option.active, .choice-chip.active {
+      border-color: var(--predator-gold);
+      background: color-mix(in srgb, var(--predator-gold) 14%, var(--obsidian));
+    }
+
+    textarea, input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
+      width: 100%;
+      border: 1px solid rgba(46, 61, 71, 0.95);
+      background: rgba(10, 10, 15, 0.8);
+      color: var(--arctic-white);
+      padding: 0.8rem;
+      margin-top: 0.55rem;
+      font: inherit;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+
+    .detail-label {
+      margin-top: 1rem;
+      color: color-mix(in srgb, var(--arctic-white) 78%, var(--steel-wake));
+      font-size: 0.84rem;
+      display: block;
+    }
+
+    .nav-row {
+      margin-top: 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+    }
+
+    button {
+      border: 1px solid rgba(46, 61, 71, 0.9);
+      background: rgba(10, 10, 15, 0.75);
+      color: var(--arctic-white);
+      padding: 0.75rem 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+    button.primary {
+      border-color: var(--predator-gold);
+      color: #f5ecd5;
+      background: color-mix(in srgb, var(--predator-gold) 18%, var(--obsidian));
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.8rem; }
+    .metric {
+      border: 1px solid rgba(46, 61, 71, 0.9);
+      background: rgba(10, 10, 15, 0.72);
+      padding: 0.8rem;
+    }
+    .metric .label { font-size: 0.72rem; text-transform: uppercase; color: #adb6bc; letter-spacing: 0.08em; }
+    .metric .value { margin-top: 0.35rem; font-size: 1.3rem; font-weight: 700; }
+
+    .table-wrap { overflow: auto; border: 1px solid rgba(46, 61, 71, 0.85); margin-top: 0.8rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { padding: 0.58rem; border-bottom: 1px solid rgba(46, 61, 71, 0.5); text-align: left; }
+    th { font-size: 0.73rem; color: #a4afb7; text-transform: uppercase; letter-spacing: 0.09em; }
+
+    .pill { display: inline-block; padding: 0.2rem 0.5rem; border: 1px solid rgba(46, 61, 71, 0.9); font-size: 0.72rem; text-transform: uppercase; }
+    .tier-1 { border-color: var(--predator-gold); color: #e6d3a4; }
+    .tier-2 { border-color: #638db2; color: #c4d8ea; }
+    .tier-3 { border-color: #7a8891; color: #d0d9df; }
+    .tier-4 { border-color: #865e5e; color: #dfb6b6; }
+
+    .helper { color: #9eabb3; font-size: 0.82rem; }
+    .error { color: #efb8b8; margin-top: 0.8rem; }
+    .ok { color: #bfdec8; margin-top: 0.8rem; }
+
+    @media (max-width: 760px) {
+      .panel { padding: 1.2rem; }
+      .header-row { flex-direction: column; align-items: flex-start; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .screen { min-height: 300px; }
+    }
   </style>
 </head>
 <body>
-
-  <div id="assessmentView" class="shell">
-    <div class="eyebrow">POD Network</div>
-    <h1>Office Readiness Intake</h1>
-    <p class="sub">Complete your profile based on your current operations.</p>
-
-    <div class="lead-info-grid">
-      <input id="officeName" class="office-input" type="text" placeholder="Your Name or Team Name (e.g. Sarah M.)" />
-      <input id="officeEmail" class="office-input" type="email" placeholder="Email Address" />
-      <input id="officePhone" class="office-input" type="tel" placeholder="Phone Number" />
-    </div>
-
-    <div class="progress-bar">
-      <div id="dots" class="dots"></div>
-      <span id="dotCount" class="dot-count">0/10</span>
-    </div>
-
-    <div id="surveyContainer"></div>
-
-    <div id="revealBox" style="display:none; margin-top: 30px;">
-      <button class="reveal-btn" id="revealBtn">Submit Intake Profile</button>
-    </div>
-
-    <div id="resultsArea" class="results-area"></div>
-
-    <div class="admin-footer" onclick="accessAdmin()">Admin Portal Access</div>
-  </div>
-
-  <div id="adminView" class="admin-shell">
-    <div class="eyebrow">Secure Dashboard</div>
-    <h1>Internal Assessment Logs</h1>
-    <input type="text" id="adminSearch" class="search-bar" placeholder="Search by name, role, email..." onkeyup="filterAdmin()">
-    <div id="adminStatus" style="margin-bottom: 10px; font-size: 12px; font-weight: 700; color: var(--gold);">Syncing data...</div>
-    <table id="adminTable">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Name / Contact</th>
-          <th>Role</th>
-          <th>Grade</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody id="adminBody"></tbody>
-    </table>
-    <button class="reveal-btn" style="margin-top: 20px; background: #666;" onclick="window.location.reload()">Exit Admin Mode</button>
+  <div class="app-shell">
+    <main class="panel" id="app"></main>
   </div>
 
   <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzA9FEcLJPybwy_Be28YSXTCAAWOJOEys7ZaZwIeScQrUpHBWrNKGo_ur1MxdHfAHl4/exec"; 
-    const SECRET_KEY = "POD2026"; 
+    const CONFIG = {
+      GOOGLE_SHEET_WEBHOOK_URL: "[INSERT GOOGLE APPS SCRIPT WEB APP URL HERE]",
+      ADMIN_ACCESS_PASSWORD: "[SET_A_STRONG_POD_ADMIN_PASSWORD]",
+      HIGH_SCORE_ALERT_THRESHOLD: 82,
+      STATUS_OPTIONS: ["New", "Under Review", "Contacted", "Qualified", "Nurture", "Disqualified"]
+    };
 
-    const state = { classifierAnswers: {}, scores: {}, notes: {}, checklistCounts: {} };
-    let allLogs = [];
+    const STORAGE_KEYS = {
+      submissions: "pod_submissions_v1",
+      adminAuth: "pod_admin_auth"
+    };
 
-    const CLASSIFIERS = [
-      { 
-        id: "role", 
-        label: "What best describes your role?", 
-        desc: "Determines program pathways.", 
-        options: [
-          { value: "referral", label: "EXP Commercial referral agent / classified referral division" },
-          { value: "solo", label: "Solo agent — independent, no team" },
-          { value: "team", label: "Agent on a team" },
-          { value: "leader", label: "Team leader or mega team operator" }
-        ]
+    const BASE_FIELDS = [
+      { id: "fullName", label: "Full name", type: "text", required: true },
+      { id: "email", label: "Email", type: "email", required: true },
+      { id: "phone", label: "Phone", type: "tel", required: true },
+      { id: "market", label: "Market / territory", type: "text", required: true }
+    ];
+
+    const SCORE_MAP = {
+      role: {
+        "EXP Commercial referral agent / classified referral division": 75,
+        "Solo agent — independent, no team": 58,
+        "Agent on a team": 65,
+        "Team leader or mega team operator": 95
       },
-      { 
-        id: "txcount", 
-        label: "How many transactions did you close in the last 12 months?", 
-        desc: "Individual or team total — whichever reflects your actual production.", 
-        options: [
-          { value: "tx1", label: "10–20 transactions" }, 
-          { value: "tx2", label: "20–30 transactions" }, 
-          { value: "tx3", label: "30–50 transactions" }, 
-          { value: "tx4", label: "50–100 transactions" }, 
-          { value: "tx5", label: "100–150 transactions" },
-          { value: "tx6", label: "150–200 transactions" },
-          { value: "tx7", label: "200+ transactions" }
-        ]
+      transactions: {
+        "10–20 transactions": 40,
+        "20–30 transactions": 55,
+        "30–50 transactions": 70,
+        "50–100 transactions": 82,
+        "100–150 transactions": 90,
+        "150–200 transactions": 96,
+        "200+ transactions": 100
+      },
+      volume: {
+        "$5M – $25M total volume": 40,
+        "$25M – $50M total volume": 56,
+        "$50M – $100M total volume": 72,
+        "$100M – $150M total volume": 84,
+        "$150M – $200M total volume": 92,
+        "$200M+ total volume": 100
+      },
+      investor: {
+        "Residential Landlord (1–4 units)": 40,
+        "Small Multi-Family Landlord (5–20 units)": 52,
+        "Commercial Property Owner (Retail, Office, Industrial)": 68,
+        "Regional Syndicate / Private Equity Group": 80,
+        "REIT Acquisition Director": 90,
+        "Land Developer / Builder": 72,
+        "High-Net-Worth Individual (HNWI)": 76,
+        "Institutional Fund Manager": 100
+      },
+      geographic: {
+        "Remote (More than a 20+ minute drive)": 30,
+        "Adjacent (10 to 20 minute drive)": 48,
+        "Near Proximity (5 to 10 minute drive)": 62,
+        "Local (Less than a 5-minute drive)": 78,
+        "Immediate (5 to 10 minute walk)": 90,
+        "Main & Main (In the commercial epicenter)": 100
+      },
+      readinessCommercial: {
+        "In evaluation mode": 30,
+        "Planning / researching database": 50,
+        "Action-oriented": 68,
+        "Actively setting deadlines and benchmarks": 84,
+        "Committed and assigning resources": 100
+      },
+      marketVelocity: {
+        "Very low": 25,
+        "Low": 42,
+        "Moderate": 65,
+        "Active": 84,
+        "High velocity": 100
+      },
+      territoryAccess: {
+        "Difficult access": 30,
+        "Somewhat accessible": 48,
+        "Reasonably accessible": 64,
+        "Well-positioned": 82,
+        "Prime location": 100
+      },
+      businessModel: {
+        "Solo residential agent": 52,
+        "Agent on a residential team": 60,
+        "Team leader / operator": 78,
+        "Referral-focused connector": 88,
+        "Other": 50
+      },
+      dbStrength: {
+        "Very limited": 20,
+        "Some contacts": 45,
+        "Moderate network": 62,
+        "Strong network": 82,
+        "Deep network with active relationships": 100
+      },
+      referralBehavior: {
+        "Never": 20,
+        "Rarely": 40,
+        "Occasionally": 62,
+        "Frequently": 84,
+        "Consistently": 100
+      },
+      readinessNonCommercial: {
+        "Just exploring": 20,
+        "Gathering information": 42,
+        "Ready to start conversations": 66,
+        "Ready to refer opportunities": 84,
+        "Ready to commit time and effort immediately": 100
+      }
+    };
+
+    const ALL_RELATIONSHIPS = [
+      "Small business owners",
+      "Franchise operators",
+      "Founders / startup leaders",
+      "C-suite executives",
+      "Property owners",
+      "Investors",
+      "Developers / builders",
+      "Professional connectors / community leaders"
+    ];
+
+    const COMMERCIAL_QUESTIONS = [
+      { id: "role", label: "What best describes your role?", type: "single", options: Object.keys(SCORE_MAP.role) },
+      { id: "transactions", label: "How many transactions did you close in the last 12 months?", type: "single", options: Object.keys(SCORE_MAP.transactions) },
+      {
+        id: "volume", label: "Team Production Volume", type: "single", options: Object.keys(SCORE_MAP.volume),
+        detailField: "Exact volume last 12 months / per-agent average if known"
+      },
+      {
+        id: "investor", label: "Investor & Portfolio Relationships", type: "single", options: Object.keys(SCORE_MAP.investor),
+        detailField: "Most significant investor contact and scale of portfolio"
+      },
+      {
+        id: "geographic", label: "Geographic Proximity to Core Commerce Hubs", type: "single", options: Object.keys(SCORE_MAP.geographic),
+        detailField: "Neighborhoods / zip codes / travel times"
+      },
+      {
+        id: "readinessCommercial", label: "Program Activation", type: "single", options: Object.keys(SCORE_MAP.readinessCommercial),
+        detailField: "What specific steps are you ready to take this week?"
+      },
+      {
+        id: "marketVelocity", label: "Local Commercial Transaction Velocity", type: "single", options: Object.keys(SCORE_MAP.marketVelocity),
+        detailField: "Awareness of recent commercial activity in market"
+      },
+      {
+        id: "territoryAccess", label: "Market Territory Accessibility", type: "single", options: Object.keys(SCORE_MAP.territoryAccess),
+        detailField: "Geographic limitations worth noting"
       }
     ];
 
-    const VARIABLES = [
-      { 
-        id: "volume", 
-        label: "Team Production Volume", 
-        weight: 20, 
-        maxScore: 6, 
-        desc: "Total transaction volume closed in the last 12 months — team or individual, whichever is higher.", 
-        notesPrompt: "Exact volume last 12 months + per-agent average if known", 
-        options: ["$5M – $25M total volume", "$25M – $50M total volume", "$50M – $100M total volume", "$100M – $150M total volume", "$150M – $200M total volume", "$200M+ total volume"] 
-      },
-      { 
-        id: "capicon", 
-        label: "Agent Cap & Icon Count", 
-        weight: 15, 
-        maxScore: 6, 
-        desc: "How many agents on the team have capped or reached Icon status in the last 12 months?", 
-        notesPrompt: "Break down the numbers (e.g., '6 capped, 2 reached Icon status this year')", 
-        options: [
-          "Less than 5 agents capping", 
-          "5 to 10 agents capping", 
-          "10 to 20 agents capping", 
-          "20 to 40 agents capping", 
-          "40 to 50 agents capping", 
-          "More than 50 agents capping"
-        ] 
-      },
-      { 
-        id: "wealth", 
-        label: "Geographic Proximity to Core Commerce Hubs", 
-        weight: 15, 
-        maxScore: 6, 
-        desc: "How far is the office from the absolute main commercial centers of your local market?", 
-        notesPrompt: "List the specific neighborhoods/zip codes and travel times", 
-        options: [
-          "Remote (More than a 20+ minute drive from the commerce hub)", 
-          "Adjacent (10 to 20 minute drive from the core center)", 
-          "Near Proximity (5 to 10 minute Uber/Drive from the core center)", 
-          "Local (Less than a 5-minute Uber or drive)",
-          "Immediate (5 to 10 minute walk from the core)", 
-          "Main & Main (Located right in the heart of the epicenter)"
-        ] 
-      },
-      { 
-        id: "engagement", 
-        label: "Program Activation", 
-        weight: 20, 
-        maxScore: 5, 
-        desc: "How are you prepared to initiate this program?", 
-        notesPrompt: "What specific steps are you ready to take this week?", 
-        options: [
-          "In evaluation mode — looking for more data", 
-          "Planning — researching and auditing my database", 
-          "Action-oriented — removing friction to begin", 
-          "Set deadlines — actively starting and setting benchmarks", 
-          "Committed — assigning assets and resources to co-own success"
-        ] 
-      },
-      { 
-        id: "crm_checklist", 
-        label: "Database and Network Makeup", 
-        weight: 10, 
-        maxScore: 8, 
-        desc: "Check off the high-level decision makers you have active relationships with in your CRM.", 
-        notesPrompt: "Please specify any significant executive or founder relationships.", 
-        isCheckbox: true,
-        options: [
-          "Small Business Owner (Local, single-location)", 
-          "Multi-Location Operator (Franchisee or regional chain)", 
-          "Founder / Startup Chairman", 
-          "C-Suite Executive (CEO, CFO, COO)", 
-          "Energy / Utility Executive", 
-          "Aerospace / Space Executive", 
-          "Tech / SaaS Executive", 
-          "Enterprise Director (Large corporate real estate portfolios)"
-        ] 
-      },
-      { 
-        id: "investor_checklist", 
-        label: "Investor & Portfolio Relationships", 
-        weight: 5, 
-        maxScore: 8, 
-        desc: "Which tiers of investors or landlords do you have active, direct relationships with in your network?", 
-        notesPrompt: "Briefly detail your most significant investor contact and the scale of their portfolio.", 
-        isCheckbox: true,
-        options: [
-          "Residential Landlord (1-4 units)", 
-          "Small Multi-Family Landlord (5-20 units)", 
-          "Commercial Property Owner (Retail, Office, Industrial)", 
-          "Regional Syndicate / Private Equity Group", 
-          "REIT Acquisition Director", 
-          "Land Developer / Builder", 
-          "High-Net-Worth Individual (HNWI)", 
-          "Institutional Fund Manager"
-        ] 
-      },
-      { 
-        id: "velocity", 
-        label: "Local Commercial Transaction Velocity", 
-        weight: 10, 
-        maxScore: 5, 
-        desc: "How active the commercial market is in this territory right now.", 
-        notesPrompt: "Any awareness of recent commercial activity in your market?", 
-        options: [
-          "Very low — minimal commercial activity", 
-          "Low — occasional deals, mostly residential market", 
-          "Moderate — steady but not deep commercial deal flow", 
-          "Active — consistent transactions across asset classes", 
-          "High velocity — significant activity, multiple asset classes"
-        ] 
-      },
-      { 
-        id: "access", 
-        label: "Market Territory Accessibility", 
-        weight: 5, 
-        maxScore: 5, 
-        desc: "Physical accessibility of the office and territory to commercial clients.", 
-        notesPrompt: "Any geographic limitations worth noting?", 
-        options: [
-          "Difficult access — isolated geography, limited client traffic", 
-          "Somewhat accessible but off main commercial corridors", 
-          "Reasonable accessible — clients can reach the office", 
-          "Well-positioned — near transit, freeways, commercial centers", 
-          "Prime location — high visibility, easy access, strong commercial flow"
-        ] 
-      }
+    const NON_COMMERCIAL_QUESTIONS = [
+      { id: "businessModel", label: "What best describes your current business model?", type: "single", options: Object.keys(SCORE_MAP.businessModel) },
+      { id: "dbStrength", label: "How strong is your database of business owners, investors, landlords, or executives?", type: "single", options: Object.keys(SCORE_MAP.dbStrength) },
+      { id: "relationshipQuality", label: "Which of the following people do you actively know?", type: "multi", options: ALL_RELATIONSHIPS },
+      { id: "referralBehavior", label: "Have you referred business opportunities, deals, vendors, or strategic introductions before?", type: "single", options: Object.keys(SCORE_MAP.referralBehavior) },
+      { id: "motivation", label: "Why are you interested in commercial real estate?", type: "text" },
+      { id: "readinessNonCommercial", label: "How prepared are you to activate in the next 7 days?", type: "single", options: Object.keys(SCORE_MAP.readinessNonCommercial) },
+      { id: "weeklyCommitment", label: "What are you willing to do this week?", type: "text" }
     ];
 
-    function initApp() {
-      const container = document.getElementById("surveyContainer");
-      let html = "";
+    const state = {
+      mode: "assessment",
+      introAccepted: false,
+      stepIndex: -1,
+      path: null,
+      responses: {},
+      sending: false,
+      sent: false,
+      error: "",
+      lastResult: null,
+      admin: {
+        authenticated: localStorage.getItem(STORAGE_KEYS.adminAuth) === "yes",
+        password: "",
+        filterPath: "All",
+        filterMarket: "",
+        search: "",
+        selectedId: null
+      }
+    };
 
-      [...CLASSIFIERS, ...VARIABLES].forEach((q, i) => {
-        const isVar = !!q.weight;
-        const isCheck = q.isCheckbox;
-        html += `
-          <div class="card" data-qid="${q.id}">
-            <span class="q-badge">Section ${i + 1}</span>
-            <span class="q-title">${q.label}</span>
-            <span class="q-desc">${q.desc}</span>
-            <div class="options">
-              ${(isVar ? q.options : q.options.map(o => o.label)).map((opt, idx) => `
-                <label class="option">
-                  <input type="${isCheck ? 'checkbox' : 'radio'}" name="${q.id}" value="${isVar ? (idx + 1) : q.options[idx].value}" onclick="handleSelect(this, '${q.id}', '${isVar ? (isCheck ? 'checkbox' : 'score') : 'classifier'}')">
-                  <span class="option-num">${idx + 1}</span>
-                  <span>${isVar ? opt : q.options[idx].label}</span>
-                </label>
-              `).join('')}
+    function getQuestionSet() {
+      return state.path === "Commercial" ? COMMERCIAL_QUESTIONS : NON_COMMERCIAL_QUESTIONS;
+    }
+
+    function getActiveQuestions() {
+      const base = [
+        { id: "commercialExperience", label: "Do you currently have commercial real estate experience?", type: "single", options: [
+          "Yes — active commercial experience",
+          "Some exposure — limited deals / learning phase",
+          "No — residential only / no commercial experience"
+        ] }
+      ];
+      if (!state.path) return base;
+      return base.concat(getQuestionSet());
+    }
+
+    function inferPath(value) {
+      if (!value) return null;
+      if (value.startsWith("No")) return "Non-Commercial";
+      return "Commercial";
+    }
+
+    function getTier(score) {
+      if (score >= 85) return "Tier 1: Immediate POD Partner";
+      if (score >= 70) return "Tier 2: Development Candidate";
+      if (score >= 50) return "Tier 3: Early-Stage / Nurture";
+      return "Tier 4: Not Yet Qualified";
+    }
+
+    function scoreText(text) {
+      if (!text) return 20;
+      const len = text.trim().length;
+      if (len > 180) return 95;
+      if (len > 110) return 82;
+      if (len > 70) return 68;
+      if (len > 35) return 52;
+      return 35;
+    }
+
+    function computeScore(responses, path) {
+      if (path === "Commercial") {
+        const transactionsProduction = ((SCORE_MAP.transactions[responses.transactions] || 0) + (SCORE_MAP.role[responses.role] || 0)) / 2;
+        const volume = SCORE_MAP.volume[responses.volume] || 0;
+        const investor = SCORE_MAP.investor[responses.investor] || 0;
+        const geo = ((SCORE_MAP.geographic[responses.geographic] || 0) + (SCORE_MAP.territoryAccess[responses.territoryAccess] || 0)) / 2;
+        const market = SCORE_MAP.marketVelocity[responses.marketVelocity] || 0;
+        const readiness = SCORE_MAP.readinessCommercial[responses.readinessCommercial] || 0;
+        const weighted = {
+          transactionsProduction,
+          volume,
+          investor,
+          geographicPositioning: geo,
+          marketActivity: market,
+          readiness
+        };
+        const total = Math.round(
+          transactionsProduction * 0.25 +
+          volume * 0.20 +
+          investor * 0.25 +
+          geo * 0.10 +
+          market * 0.10 +
+          readiness * 0.10
+        );
+        return { total, weighted, tier: getTier(total) };
+      }
+
+      const relationshipQuality = Math.min(100, Math.round(((responses.relationshipQuality || []).length / ALL_RELATIONSHIPS.length) * 100));
+      const dbStrength = SCORE_MAP.dbStrength[responses.dbStrength] || 0;
+      const referral = SCORE_MAP.referralBehavior[responses.referralBehavior] || 0;
+      const motivation = Math.round((scoreText(responses.motivation) + scoreText(responses.weeklyCommitment)) / 2);
+      const readiness = SCORE_MAP.readinessNonCommercial[responses.readinessNonCommercial] || 0;
+      const weighted = { dbStrength, relationshipQuality, referralBehavior: referral, motivation, readiness };
+      const total = Math.round(
+        dbStrength * 0.30 +
+        relationshipQuality * 0.25 +
+        referral * 0.20 +
+        motivation * 0.10 +
+        readiness * 0.15
+      );
+      return { total, weighted, tier: getTier(total) };
+    }
+
+    function uid() {
+      return "SUB-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 9000 + 1000);
+    }
+
+    function getStoredSubmissions() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.submissions) || "[]");
+      } catch { return []; }
+    }
+
+    function setStoredSubmissions(data) {
+      localStorage.setItem(STORAGE_KEYS.submissions, JSON.stringify(data));
+    }
+
+    async function persistSubmission(record) {
+      const list = getStoredSubmissions();
+      list.unshift(record);
+      setStoredSubmissions(list);
+
+      if (CONFIG.GOOGLE_SHEET_WEBHOOK_URL && !CONFIG.GOOGLE_SHEET_WEBHOOK_URL.startsWith("[")) {
+        await fetch(CONFIG.GOOGLE_SHEET_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(record)
+        });
+      }
+    }
+
+    function updateProgress() {
+      const questions = getActiveQuestions();
+      const bar = document.getElementById("progressFill");
+      const label = document.getElementById("progressLabel");
+      if (!bar || !label) return;
+
+      if (state.stepIndex < 0) {
+        bar.style.width = "2%";
+        label.textContent = "Intro";
+        return;
+      }
+      const current = state.stepIndex + 1;
+      const total = questions.length;
+      bar.style.width = `${Math.min(100, Math.round((current / total) * 100))}%`;
+      label.textContent = `Step ${current} of ${total}`;
+    }
+
+    function canContinue(question) {
+      const value = state.responses[question.id];
+      if (question.type === "single") return !!value;
+      if (question.type === "multi") return Array.isArray(value) && value.length > 0;
+      if (question.type === "text") return typeof value === "string" && value.trim().length > 2;
+      return false;
+    }
+
+    function renderAssessment() {
+      const app = document.getElementById("app");
+      const questions = getActiveQuestions();
+
+      if (state.stepIndex > questions.length) state.stepIndex = questions.length;
+
+      const progressHTML = `
+        <div class="progress-wrap">
+          <div class="mono" id="progressLabel">Intro</div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      `;
+
+      if (state.stepIndex === -1) {
+        app.innerHTML = `
+          <div class="header-row">
+            <div>
+              <p class="kicker">POD Network Qualification Engine</p>
+              <h1>Commercial Partner Assessment</h1>
             </div>
-            ${isVar ? `<span class="notes-label">Details & Context</span>
-            <textarea class="notes" onblur="state.notes['${q.id}'] = this.value" placeholder="${q.notesPrompt}"></textarea>` : ''}
-          </div>`;
-      });
-      container.innerHTML = html;
-      updateUI();
-    }
-
-    function handleSelect(input, qid, type) {
-      if (type === 'checkbox') {
-        input.closest('.option').classList.toggle('selected', input.checked);
-        const card = input.closest('.card');
-        const checkedCount = card.querySelectorAll('input[type="checkbox"]:checked').length;
-        state.checklistCounts[qid] = checkedCount;
-      } else {
-        input.closest('.card').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-        input.closest('.option').classList.add('selected');
-        if (type === 'classifier') state.classifierAnswers[qid] = input.value;
-        else state.scores[qid] = Number(input.value);
+            <div class="mono">Private Candidate Intake</div>
+          </div>
+          ${progressHTML}
+          <section class="screen">
+            <h2 class="question-title">A strategic qualification experience built for commercial alignment.</h2>
+            <p class="lead">This assessment uses branching logic and weighted scoring to evaluate partner readiness. You will see one question at a time. The sequence adapts based on your commercial experience level.</p>
+            <div class="grid-2" style="margin-top:1rem;">
+              ${BASE_FIELDS.map((f) => `
+                <label class="detail-label">${f.label}
+                  <input type="${f.type}" id="field-${f.id}" value="${state.responses[f.id] || ""}" />
+                </label>
+              `).join("")}
+            </div>
+            <div class="nav-row">
+              <button id="goAdmin">POD Admin Access</button>
+              <button class="primary" id="startBtn">Begin Assessment</button>
+            </div>
+            ${state.error ? `<div class="error">${state.error}</div>` : ""}
+          </section>
+        `;
+        document.getElementById("startBtn").onclick = () => {
+          state.error = "";
+          for (const f of BASE_FIELDS) {
+            const value = document.getElementById(`field-${f.id}`).value.trim();
+            if (f.required && !value) {
+              state.error = `Please complete ${f.label}.`;
+              render();
+              return;
+            }
+            state.responses[f.id] = value;
+          }
+          state.stepIndex = 0;
+          render();
+        };
+        document.getElementById("goAdmin").onclick = () => {
+          state.mode = "admin";
+          state.error = "";
+          render();
+        };
+        updateProgress();
+        return;
       }
-      updateUI();
-    }
 
-    function updateUI() {
-      const cCount = Object.keys(state.classifierAnswers).length;
-      const vCount = Object.keys(state.scores).length + Object.keys(state.checklistCounts).length;
-      const total = CLASSIFIERS.length + VARIABLES.length;
-      document.getElementById("dotCount").innerText = `${cCount + vCount}/${total}`;
-      let dotsHtml = "";
-      for(let i=0; i<total; i++) dotsHtml += `<div class="dot ${(i < cCount + vCount) ? 'filled' : ''}"></div>`;
-      document.getElementById("dots").innerHTML = dotsHtml;
-      if (cCount + vCount === total) document.getElementById("revealBox").style.display = "block";
-    }
+      if (state.stepIndex >= questions.length) {
+        const result = state.lastResult;
+        app.innerHTML = `
+          <div class="header-row">
+            <div>
+              <p class="kicker">Submission Confirmed</p>
+              <h1>Thank you, ${state.responses.fullName || "Candidate"}</h1>
+            </div>
+            <div class="mono">ID ${result?.submissionId || "-"}</div>
+          </div>
+          <section class="screen">
+            <p class="lead">Your assessment has been securely received. Our team will review your profile and follow up if there is strategic alignment with POD Network partner priorities.</p>
+            <div class="metric-grid" style="margin-top:1rem;">
+              <div class="metric"><div class="label">Path</div><div class="value">${state.path}</div></div>
+              <div class="metric"><div class="label">Score</div><div class="value">${result?.score?.total ?? "-"}/100</div></div>
+              <div class="metric"><div class="label">Tier</div><div class="value" style="font-size:1rem;">${result?.score?.tier || "-"}</div></div>
+            </div>
+            <div class="nav-row">
+              <button id="newAssessment">Start New Assessment</button>
+              <button id="toAdmin">POD Admin Access</button>
+            </div>
+          </section>
+        `;
+        document.getElementById("newAssessment").onclick = () => {
+          state.stepIndex = -1;
+          state.responses = {};
+          state.path = null;
+          state.lastResult = null;
+          state.sent = false;
+          state.error = "";
+          render();
+        };
+        document.getElementById("toAdmin").onclick = () => { state.mode = "admin"; render(); };
+        return;
+      }
 
-    document.getElementById("revealBtn").onclick = async function() {
-      const btn = this; btn.innerText = "SUBMITTING..."; btn.disabled = true;
-      
-      let rawSum = 0;
-      VARIABLES.forEach(v => {
-        if(v.isCheckbox) {
-          rawSum += ((state.checklistCounts[v.id] || 0) / v.maxScore) * v.weight;
-        } else {
-          rawSum += ((state.scores[v.id] || 0) / v.maxScore) * v.weight;
-        }
-      });
+      const question = questions[state.stepIndex];
+      let content = `<h2 class="question-title">${question.label}</h2>`;
 
-      let grade = rawSum >= 90 ? "A+" : rawSum >= 82 ? "A" : rawSum >= 72 ? "B+" : rawSum >= 58 ? "B" : "C";
-      let tier = state.classifierAnswers.role === "referral" ? "Tier 1 Referral" : (grade.startsWith("A") ? "Tier 3 — High Activation" : "Tier 1-2 Growth");
-      
-      let name = document.getElementById("officeName").value || "Anonymous Agent";
-      let email = document.getElementById("officeEmail").value || "N/A";
-      let phone = document.getElementById("officePhone").value || "N/A";
+      if (question.type === "single") {
+        content += `<div class="options">${question.options.map((opt) => `
+          <button class="option ${state.responses[question.id] === opt ? "active" : ""}" data-opt="${opt.replaceAll('"', '&quot;')}">${opt}</button>
+        `).join("")}</div>`;
+      }
 
-      const payload = { 
-        officeName: name, 
-        email: email, 
-        phone: phone, 
-        role: state.classifierAnswers.role, 
-        transactions: state.classifierAnswers.txcount, 
-        grade: grade, 
-        tier: tier, 
-        score: rawSum.toFixed(1), 
-        notes: JSON.stringify(state.notes) 
+      if (question.type === "multi") {
+        const selected = state.responses[question.id] || [];
+        content += `<div class="options">${question.options.map((opt) => `
+          <button class="choice-chip ${selected.includes(opt) ? "active" : ""}" data-chip="${opt.replaceAll('"', '&quot;')}">${opt}</button>
+        `).join("")}</div>`;
+      }
+
+      if (question.type === "text") {
+        content += `<label class="detail-label">Response
+          <textarea id="text-${question.id}" placeholder="Provide a concise, professional response...">${state.responses[question.id] || ""}</textarea>
+        </label>`;
+      }
+
+      if (question.detailField) {
+        content += `<label class="detail-label">${question.detailField}
+          <textarea id="detail-${question.id}" placeholder="Optional detail...">${state.responses[`${question.id}Detail`] || ""}</textarea>
+        </label>`;
+      }
+
+      app.innerHTML = `
+        <div class="header-row">
+          <div>
+            <p class="kicker">POD Network Assessment</p>
+            <h1>Candidate Qualification Flow</h1>
+          </div>
+          <div class="mono">${state.path || "Path Pending"}</div>
+        </div>
+        ${progressHTML}
+        <section class="screen">
+          ${content}
+          <div class="nav-row">
+            <button id="prevBtn" ${state.stepIndex === 0 ? "disabled" : ""}>Previous</button>
+            <button class="primary" id="nextBtn" ${canContinue(question) ? "" : "disabled"}>${state.stepIndex === questions.length - 1 ? "Submit" : "Next"}</button>
+          </div>
+          ${state.error ? `<div class="error">${state.error}</div>` : ""}
+          ${state.sent ? `<div class="ok">Submission synced.</div>` : ""}
+        </section>
+      `;
+
+      if (question.type === "single") {
+        document.querySelectorAll("[data-opt]").forEach(btn => {
+          btn.onclick = () => {
+            state.responses[question.id] = btn.dataset.opt;
+            if (question.id === "commercialExperience") {
+              state.path = inferPath(state.responses[question.id]);
+              const retained = { ...state.responses };
+              for (const key of Object.keys(retained)) {
+                if (!["fullName", "email", "phone", "market", "commercialExperience"].includes(key)) {
+                  delete state.responses[key];
+                }
+              }
+            }
+            state.error = "";
+            render();
+          };
+        });
+      }
+
+      if (question.type === "multi") {
+        document.querySelectorAll("[data-chip]").forEach(btn => {
+          btn.onclick = () => {
+            const list = new Set(state.responses[question.id] || []);
+            const v = btn.dataset.chip;
+            if (list.has(v)) list.delete(v); else list.add(v);
+            state.responses[question.id] = Array.from(list);
+            state.error = "";
+            render();
+          };
+        });
+      }
+
+      if (question.type === "text") {
+        document.getElementById(`text-${question.id}`).oninput = (e) => {
+          state.responses[question.id] = e.target.value;
+          document.getElementById("nextBtn").disabled = !canContinue(question);
+        };
+      }
+
+      if (question.detailField) {
+        document.getElementById(`detail-${question.id}`).oninput = (e) => {
+          state.responses[`${question.id}Detail`] = e.target.value;
+        };
+      }
+
+      document.getElementById("prevBtn").onclick = () => {
+        if (state.stepIndex > 0) state.stepIndex -= 1;
+        state.error = "";
+        render();
       };
 
-      try {
-        await fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        const results = document.getElementById("resultsArea");
-        results.innerHTML = `<div class="results-top">
-          <div style="font-size: 24px; font-weight: 800; color: #405e5b; margin-bottom:12px;">Profile Submitted Successfully</div>
-          <p style="color: #636b69; font-size: 15px;">Thank you for your submission. Our team will review your operation metrics and reach out to outline next steps and onboarding paths.</p>
-        </div>`;
-        results.classList.add("show");
-        results.scrollIntoView({ behavior: 'smooth' });
-        document.getElementById("revealBox").style.display = "none";
-      } catch (e) { alert("Submission error. Check connection."); btn.disabled = false; btn.innerText = "Submit Intake Profile"; }
-    };
-
-    function accessAdmin() {
-      const key = prompt("Enter Admin Secret Key:");
-      if (key === SECRET_KEY) {
-        document.getElementById("assessmentView").style.display = "none";
-        document.getElementById("adminView").style.display = "block";
-        fetchAdminData();
-      } else if (key) { alert("Access Denied."); }
-    }
-
-    async function fetchAdminData() {
-      try {
-        const response = await fetch(GOOGLE_URL);
-        allLogs = await response.json();
-        renderAdminTable(allLogs.reverse());
-      } catch (e) { document.getElementById("adminStatus").innerText = "Error fetching data."; }
-    }
-
-    function renderAdminTable(data) {
-      const body = document.getElementById("adminBody");
-      body.innerHTML = "";
-      document.getElementById("adminStatus").innerText = `${data.length} Submissions Found`;
-      
-      data.forEach((row, index) => {
-        const tr = document.createElement("tr");
-        tr.classList.add('clickable-row');
-
-        const nameVal = row.officename || row["Office Name"] || row["officeName"] || "Anonymous Agent";
-        const emailVal = row.email || row["Email"] || "N/A";
-        const phoneVal = row.phone || row["Phone"] || "N/A";
-        const roleVal = row.role || row["Role"] || "N/A";
-        const gradeVal = row.finalgrade || row["Final Grade"] || row["finalgrade"] || "C";
-        const scoreVal = row.rawscore || row["Raw Score"] || row["rawscore"] || "0";
-
-        const gradeClass = gradeVal.replace('+', '-plus');
-
-        if (gradeVal === "A+" || gradeVal === "A") {
-          tr.style.backgroundColor = "#fffef0";
-          tr.style.borderLeft = "4px solid var(--gold)";
+      document.getElementById("nextBtn").onclick = async () => {
+        state.error = "";
+        const isLast = state.stepIndex === questions.length - 1;
+        if (!canContinue(question)) {
+          state.error = "Please complete this step before continuing.";
+          render();
+          return;
         }
 
-        tr.setAttribute('onclick', `toggleDrawer('drawer-${index}')`);
+        if (!isLast) {
+          state.stepIndex += 1;
+          render();
+          return;
+        }
 
-        tr.innerHTML = `
-          <td>${new Date(row.timestamp).toLocaleDateString()}</td>
-          <td>
-            <div style="font-weight:700; color: #405e5b;">${nameVal}</div>
-            <div style="font-size:11px; color:#888;">${emailVal} | ${phoneVal}</div>
-          </td>
-          <td>${roleVal}</td>
-          <td><span class="grade-pill ${gradeClass}">${gradeVal}</span></td>
-          <td style="font-weight:600;">${scoreVal}%</td>
-        `;
-        body.appendChild(tr);
+        if (state.sending) return;
+        state.sending = true;
+        const score = computeScore(state.responses, state.path);
+        const record = {
+          timestamp: new Date().toISOString(),
+          submissionId: uid(),
+          fullName: state.responses.fullName,
+          email: state.responses.email,
+          phone: state.responses.phone,
+          market: state.responses.market,
+          commercialExperience: state.responses.commercialExperience,
+          pathTaken: state.path,
+          answers: structuredClone(state.responses),
+          categoryScores: score.weighted,
+          totalScore: score.total,
+          tier: score.tier,
+          reviewStatus: "New",
+          followUpOwner: "",
+          internalNotes: "",
+          recommendedDisposition: score.total >= CONFIG.HIGH_SCORE_ALERT_THRESHOLD ? "Priority follow-up" : "Standard review"
+        };
 
-        const drawerTr = document.createElement("tr");
-        drawerTr.classList.add('notes-drawer');
-
-        let parsedNotes = {};
         try {
-          parsedNotes = typeof row.notes === "string" ? JSON.parse(row.notes) : row.notes || {};
-        } catch (e) {
-          parsedNotes = { manual: row.notes };
+          await persistSubmission(record);
+          state.sent = true;
+          state.lastResult = { submissionId: record.submissionId, score };
+          state.stepIndex += 1;
+        } catch {
+          state.error = "Unable to sync to endpoint. Saved locally for admin review.";
+          state.lastResult = { submissionId: record.submissionId, score };
+          state.stepIndex += 1;
+        } finally {
+          state.sending = false;
+          render();
         }
+      };
 
-        let notesHtml = '';
-        if (parsedNotes.manual) {
-          notesHtml = `<div class="note-block"><h4>General Notes</h4><p>${parsedNotes.manual}</p></div>`;
-        } else {
-          for (const [key, value] of Object.entries(parsedNotes)) {
-            if (value && value.trim() !== '') {
-              const variable = VARIABLES.find(v => v.id === key);
-              const label = variable ? variable.label : key;
-              notesHtml += `<div class="note-block"><h4>${label}</h4><p>${value}</p></div>`;
-            }
-          }
-        }
-        if (!notesHtml) notesHtml = '<p style="color:#aaa; font-style:italic;">No notes recorded.</p>';
+      updateProgress();
+    }
 
-        drawerTr.innerHTML = `
-          <td colspan="5">
-            <div id="drawer-${index}" class="drawer-content">
-              <h3 style="margin-bottom:15px; font-size:14px; font-weight:800; color:var(--teal)">Detailed Diagnostics & Field Notes</h3>
-              <div class="notes-grid">${notesHtml}</div>
+    function adminMetrics(rows) {
+      const total = rows.length;
+      const average = total ? Math.round(rows.reduce((a, r) => a + (r.totalScore || 0), 0) / total) : 0;
+      const byTier = rows.reduce((acc, r) => {
+        acc[r.tier] = (acc[r.tier] || 0) + 1;
+        return acc;
+      }, {});
+      const byMarket = rows.reduce((acc, r) => {
+        acc[r.market] = (acc[r.market] || 0) + 1;
+        return acc;
+      }, {});
+      const byPathAvg = rows.reduce((acc, r) => {
+        const p = r.pathTaken || "Unknown";
+        acc[p] ||= { sum: 0, count: 0 };
+        acc[p].sum += (r.totalScore || 0);
+        acc[p].count += 1;
+        return acc;
+      }, {});
+      return {
+        total,
+        average,
+        byTier,
+        topMarkets: Object.entries(byMarket).sort((a, b) => b[1] - a[1]).slice(0, 5),
+        pathAverages: Object.entries(byPathAvg).map(([path, v]) => ({ path, avg: Math.round(v.sum / v.count) }))
+      };
+    }
+
+    function renderAdmin() {
+      const app = document.getElementById("app");
+      const all = getStoredSubmissions();
+
+      if (!state.admin.authenticated) {
+        app.innerHTML = `
+          <div class="header-row">
+            <div>
+              <p class="kicker">POD Internal Dashboard</p>
+              <h1>Administrator Access</h1>
             </div>
-          </td>
+            <div class="mono">Restricted</div>
+          </div>
+          <section class="screen">
+            <p class="lead">This command center is visible to POD administrators only. Enter the access credential configured in <span class="mono">CONFIG.ADMIN_ACCESS_PASSWORD</span>.</p>
+            <label class="detail-label">Admin password
+              <input type="password" id="adminPass" value="${state.admin.password}" />
+            </label>
+            <div class="nav-row">
+              <button id="backToAssessment">Back to Assessment</button>
+              <button class="primary" id="unlockAdmin">Unlock Dashboard</button>
+            </div>
+            ${state.error ? `<div class="error">${state.error}</div>` : ""}
+          </section>
         `;
-        body.appendChild(drawerTr);
+        document.getElementById("backToAssessment").onclick = () => { state.mode = "assessment"; state.error = ""; render(); };
+        document.getElementById("unlockAdmin").onclick = () => {
+          state.admin.password = document.getElementById("adminPass").value;
+          if (state.admin.password === CONFIG.ADMIN_ACCESS_PASSWORD && !state.admin.password.startsWith("[")) {
+            state.admin.authenticated = true;
+            localStorage.setItem(STORAGE_KEYS.adminAuth, "yes");
+            state.error = "";
+            render();
+            return;
+          }
+          state.error = "Invalid admin credential or default placeholder not replaced.";
+          render();
+        };
+        return;
+      }
+
+      let rows = all;
+      if (state.admin.filterPath !== "All") rows = rows.filter(r => r.pathTaken === state.admin.filterPath);
+      if (state.admin.filterMarket.trim()) rows = rows.filter(r => (r.market || "").toLowerCase().includes(state.admin.filterMarket.toLowerCase()));
+      if (state.admin.search.trim()) {
+        const q = state.admin.search.toLowerCase();
+        rows = rows.filter(r => (r.fullName || "").toLowerCase().includes(q) || (r.email || "").toLowerCase().includes(q));
+      }
+
+      const metrics = adminMetrics(rows);
+      const selected = all.find(s => s.submissionId === state.admin.selectedId) || rows[0] || null;
+
+      app.innerHTML = `
+        <div class="header-row">
+          <div>
+            <p class="kicker">POD Internal Dashboard</p>
+            <h1>Assessment Command Center</h1>
+          </div>
+          <div class="mono">Admin Authenticated</div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><div class="label">Total Assessments</div><div class="value">${metrics.total}</div></div>
+          <div class="metric"><div class="label">Average Score</div><div class="value">${metrics.average}</div></div>
+          <div class="metric"><div class="label">Flagged > ${CONFIG.HIGH_SCORE_ALERT_THRESHOLD}</div><div class="value">${rows.filter(r => (r.totalScore || 0) >= CONFIG.HIGH_SCORE_ALERT_THRESHOLD).length}</div></div>
+          <div class="metric"><div class="label">Tier 1 Count</div><div class="value">${metrics.byTier["Tier 1: Immediate POD Partner"] || 0}</div></div>
+        </div>
+
+        <div class="grid-2" style="margin-top:1rem; align-items:end;">
+          <label class="detail-label">Path filter
+            <select id="filterPath" style="width:100%; padding:0.7rem; background:#0a0a0f; color:#f4f6f7; border:1px solid #2e3d47;">
+              ${["All", "Commercial", "Non-Commercial"].map(v => `<option ${state.admin.filterPath === v ? "selected" : ""}>${v}</option>`).join("")}
+            </select>
+          </label>
+          <label class="detail-label">Market filter
+            <input id="filterMarket" type="text" value="${state.admin.filterMarket}" placeholder="e.g., Dallas" />
+          </label>
+        </div>
+        <label class="detail-label">Search by name or email
+          <input id="searchField" type="text" value="${state.admin.search}" placeholder="Search..." />
+        </label>
+
+        <div class="nav-row" style="margin-top:1rem;">
+          <button id="toAssessment">Back to Assessment</button>
+          <button id="logoutAdmin">Logout Admin</button>
+          <button class="primary" id="exportBtn">Export JSON</button>
+        </div>
+
+        <h3 style="margin-top:1.4rem;">Recent Submissions</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Date</th><th>Path</th><th>Score</th><th>Tier</th><th>Market</th><th>Status</th></tr></thead>
+            <tbody>
+              ${rows.slice(0, 25).map(r => `
+                <tr data-id="${r.submissionId}" class="sub-row" style="cursor:pointer;">
+                  <td>${r.fullName || "-"}</td>
+                  <td>${new Date(r.timestamp).toLocaleDateString()}</td>
+                  <td>${r.pathTaken}</td>
+                  <td>${r.totalScore}</td>
+                  <td><span class="pill ${r.tier?.startsWith("Tier 1") ? "tier-1" : r.tier?.startsWith("Tier 2") ? "tier-2" : r.tier?.startsWith("Tier 3") ? "tier-3" : "tier-4"}">${r.tier || "-"}</span></td>
+                  <td>${r.market || "-"}</td>
+                  <td>${r.reviewStatus || "New"}</td>
+                </tr>
+              `).join("") || `<tr><td colspan="7" class="helper">No submissions yet.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:1.4rem;">Admin Insights</h3>
+        <p class="helper">Top markets: ${metrics.topMarkets.map(([m,c]) => `${m} (${c})`).join(", ") || "No data"}</p>
+        <p class="helper">Average by path: ${metrics.pathAverages.map(p => `${p.path}: ${p.avg}`).join(" | ") || "No data"}</p>
+
+        ${selected ? `
+          <h3 style="margin-top:1.4rem;">Submission Detail</h3>
+          <div class="metric-grid">
+            <div class="metric"><div class="label">Candidate</div><div class="value" style="font-size:1rem;">${selected.fullName}</div></div>
+            <div class="metric"><div class="label">Overall Score</div><div class="value">${selected.totalScore}</div></div>
+            <div class="metric"><div class="label">Tier</div><div class="value" style="font-size:1rem;">${selected.tier}</div></div>
+            <div class="metric"><div class="label">Disposition</div><div class="value" style="font-size:1rem;">${selected.recommendedDisposition || "Standard review"}</div></div>
+          </div>
+          <div class="grid-2" style="margin-top:1rem;">
+            <div>
+              <div class="mono">Category Scoring Breakdown</div>
+              <pre style="white-space:pre-wrap; background:#0a0a0f; border:1px solid #2e3d47; padding:0.7rem;">${JSON.stringify(selected.categoryScores, null, 2)}</pre>
+            </div>
+            <div>
+              <div class="mono">Written Responses</div>
+              <pre style="white-space:pre-wrap; background:#0a0a0f; border:1px solid #2e3d47; padding:0.7rem;">${JSON.stringify({
+                motivation: selected.answers?.motivation || "",
+                weeklyCommitment: selected.answers?.weeklyCommitment || "",
+                investorDetail: selected.answers?.investorDetail || "",
+                readinessDetail: selected.answers?.readinessCommercialDetail || ""
+              }, null, 2)}</pre>
+            </div>
+          </div>
+          <label class="detail-label">Review status
+            <select id="statusSelect" style="width:100%; padding:0.7rem; background:#0a0a0f; color:#f4f6f7; border:1px solid #2e3d47;">
+              ${CONFIG.STATUS_OPTIONS.map(v => `<option ${selected.reviewStatus === v ? "selected" : ""}>${v}</option>`).join("")}
+            </select>
+          </label>
+          <label class="detail-label">Follow-up owner
+            <input id="ownerField" type="text" value="${selected.followUpOwner || ""}" />
+          </label>
+          <label class="detail-label">Internal notes
+            <textarea id="notesField">${selected.internalNotes || ""}</textarea>
+          </label>
+          <button class="primary" id="saveAdminNotes">Save Review Update</button>
+        ` : ""}
+      `;
+
+      document.getElementById("toAssessment").onclick = () => { state.mode = "assessment"; render(); };
+      document.getElementById("logoutAdmin").onclick = () => {
+        state.admin.authenticated = false;
+        localStorage.removeItem(STORAGE_KEYS.adminAuth);
+        render();
+      };
+      document.getElementById("filterPath").onchange = (e) => { state.admin.filterPath = e.target.value; render(); };
+      document.getElementById("filterMarket").oninput = (e) => { state.admin.filterMarket = e.target.value; render(); };
+      document.getElementById("searchField").oninput = (e) => { state.admin.search = e.target.value; render(); };
+
+      document.querySelectorAll(".sub-row").forEach(row => {
+        row.onclick = () => { state.admin.selectedId = row.dataset.id; render(); };
       });
+
+      document.getElementById("exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `pod-assessments-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      if (selected && document.getElementById("saveAdminNotes")) {
+        document.getElementById("saveAdminNotes").onclick = () => {
+          const submissions = getStoredSubmissions();
+          const idx = submissions.findIndex(s => s.submissionId === selected.submissionId);
+          if (idx >= 0) {
+            submissions[idx].reviewStatus = document.getElementById("statusSelect").value;
+            submissions[idx].followUpOwner = document.getElementById("ownerField").value;
+            submissions[idx].internalNotes = document.getElementById("notesField").value;
+            setStoredSubmissions(submissions);
+            render();
+          }
+        };
+      }
     }
 
-    window.toggleDrawer = function(id) {
-      const drawer = document.getElementById(id);
-      if (drawer) drawer.classList.toggle('open');
-    };
-
-    function filterAdmin() {
-      const query = document.getElementById("adminSearch").value.toLowerCase();
-      const filtered = allLogs.filter(r => {
-        const name = (r.officename || r["Office Name"] || "").toLowerCase();
-        const role = (r.role || "").toLowerCase();
-        const email = (r.email || "").toLowerCase();
-        return name.includes(query) || role.includes(query) || email.includes(query);
-      });
-      renderAdminTable(filtered);
+    function render() {
+      if (state.mode === "admin") renderAdmin();
+      else renderAssessment();
     }
 
-    initApp();
+    render();
   </script>
 </body>
 </html>
